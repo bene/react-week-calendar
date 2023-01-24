@@ -1,0 +1,67 @@
+type WithOptions = {
+  year?: number;
+  month?: number;
+  date?: number;
+  hours?: number;
+  minutes?: number;
+  second?: number;
+  milliseconds?: number;
+};
+
+function getCell(
+  offset: { x: number; y: number },
+  cellSize: { height: number; width: number },
+  x: number,
+  y: number
+): Cell {
+  const cellX = x - offset.x;
+  const cellY = y - offset.y;
+
+  const day = Math.ceil((cellX / (cellSize.width * 7)) * 7);
+  const hour = Math.floor((cellY / (cellSize.height * 48)) * 48) / 2;
+
+  return {
+    day,
+    hour,
+  };
+}
+
+function copyDateWith(date: Date, opts: WithOptions) {
+  const newDate = new Date(date);
+
+  if (opts.year) {
+    newDate.setFullYear(opts.year);
+  }
+
+  if (opts.month) {
+    newDate.setMonth(opts.month);
+  }
+
+  if (opts.date) {
+    newDate.setDate(opts.date);
+  }
+
+  if (opts.hours) {
+    newDate.setHours(opts.hours);
+  }
+
+  if (opts.minutes) {
+    newDate.setMinutes(opts.minutes);
+  }
+
+  if (opts.second) {
+    newDate.setSeconds(opts.second);
+  }
+
+  if (opts.milliseconds) {
+    newDate.setMilliseconds(opts.milliseconds);
+  }
+
+  return newDate;
+}
+
+function convertRemToPixels(rem: number) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
+
+export { getCell, copyDateWith, convertRemToPixels };
