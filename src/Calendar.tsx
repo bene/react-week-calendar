@@ -4,9 +4,12 @@ import CalendarEventView from "./CalendarEventView";
 import CalendarTimeScale from "./CalendarTimeScale";
 import CalendarWeekdayNames from "./CalendarWeekdayNames";
 import CalendarWeekScale from "./CalendarWeekScale";
-import useElementSize from "./useComponentSize";
+import useElementSize from "./useElementSize";
+import useElementOffset from "./useElementOffset";
 import { CalendarEvent, Cell } from "./types";
 import { convertRemToPixels, copyDateWith, getCell } from "./utils";
+
+const _twInclude = "h-screen w-screen";
 
 type CalendarProps = {
   events: CalendarEvent[];
@@ -36,6 +39,7 @@ function Calendar({
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
   const cellWidthMeasurementEl = useRef<HTMLDivElement | null>(null);
   const cellSize = useElementSize(cellWidthMeasurementEl);
+  const eventsGridOffset = useElementOffset(eventsGridEl);
 
   useEffect(() => {
     if (containerEl.current && scrollToCurrentTime) {
@@ -77,17 +81,18 @@ function Calendar({
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (!(cellSize && containerEl.current)) {
+    if (!(cellSize && containerEl.current && eventsGridOffset)) {
       return;
     }
 
     const cell = getCell(
       {
-        x:
-          window.scrollX +
-          containerEl.current.scrollLeft -
-          convertRemToPixels(3.5), // CalendarTimeScale on left has width of 3.5rem
-        y: window.scrollY + containerEl.current.scrollTop - (48 + cellHeight), // CalendarWeekdayNames + Spacer on top has height of 48px
+        x: eventsGridOffset.x,
+        y: eventsGridOffset.y + cellHeight,
+      },
+      {
+        x: containerEl.current.scrollLeft + window.scrollX,
+        y: containerEl.current.scrollTop + window.scrollY,
       },
       {
         width: cellSize.width,
@@ -131,10 +136,10 @@ function Calendar({
 
   return (
     <>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full w-full">
         <div
           ref={containerEl}
-          className="scroll-smooth select-none isolate flex flex-auto flex-col overflow-auto bg-white"
+          className="scroll-smooth select-none isolate flex flex-auto flex-col overflow-auto"
         >
           <div
             style={{ width: "165%" }}
@@ -143,7 +148,7 @@ function Calendar({
             <CalendarWeekdayNames />
 
             <div className="flex flex-auto">
-              <div className="sticky left-0 z-10 w-14 flex-none bg-white ring-1 ring-gray-100" />
+              <div className="sticky left-0 z-10 w-14 flex-none ring-1 ring-gray-100" />
               <div className="grid flex-auto grid-cols-1 grid-rows-1">
                 {/* Horizontal lines */}
                 <CalendarTimeScale cellHeight={cellHeight} />

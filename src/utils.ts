@@ -12,12 +12,13 @@ type WithOptions = {
 
 function getCell(
   offset: { x: number; y: number },
+  scroll: { x: number; y: number },
   cellSize: { height: number; width: number },
   x: number,
   y: number
 ): Cell {
-  const posX = x + offset.x;
-  const posY = y + offset.y;
+  const posX = x - offset.x + scroll.x;
+  const posY = y - offset.y + scroll.y;
 
   const day = Math.ceil((posX / (cellSize.width * 7)) * 7);
   const hour = Math.floor((posY / (cellSize.height * 48)) * 48) / 2;
