@@ -1,4 +1,4 @@
-type CalendarEvent = {
+export type CalendarEvent = {
   id: string;
   title: string;
   start: Date;
@@ -7,7 +7,7 @@ type CalendarEvent = {
   onDelete?: () => void;
 };
 
-type Cell = {
+export type Cell = {
   day: number;
   hour: number;
 };

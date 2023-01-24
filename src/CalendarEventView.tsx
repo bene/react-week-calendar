@@ -1,4 +1,5 @@
 import TrashIcon from "./TrashIcon";
+import { CalendarEvent } from "./types";
 
 const weekdayClasses = [
   "sm:col-start-7",

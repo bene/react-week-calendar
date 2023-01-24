@@ -1,3 +1,5 @@
+import { Cell } from "./types";
+
 type WithOptions = {
   year?: number;
   month?: number;

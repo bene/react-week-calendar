@@ -5,6 +5,7 @@ import CalendarTimeScale from "./CalendarTimeScale";
 import CalendarWeekdayNames from "./CalendarWeekdayNames";
 import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useComponentSize";
+import { CalendarEvent, Cell } from "./types";
 import { convertRemToPixels, copyDateWith, getCell } from "./utils";
 
 type CalendarProps = {
