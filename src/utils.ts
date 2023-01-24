@@ -14,11 +14,11 @@ function getCell(
   x: number,
   y: number
 ): Cell {
-  const cellX = x - offset.x;
-  const cellY = y - offset.y;
+  const posX = x + offset.x;
+  const posY = y + offset.y;
 
-  const day = Math.ceil((cellX / (cellSize.width * 7)) * 7);
-  const hour = Math.floor((cellY / (cellSize.height * 48)) * 48) / 2;
+  const day = Math.ceil((posX / (cellSize.width * 7)) * 7);
+  const hour = Math.floor((posY / (cellSize.height * 48)) * 48) / 2;
 
   return {
     day,

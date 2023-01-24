@@ -25,15 +25,17 @@ function dateSpanToGridRowSpan(start: Date, end: Date) {
   }`;
 }
 
+type CalendarEventViewProps = {
+  event: CalendarEvent;
+  isDragged: boolean;
+  onDelete: () => void;
+};
+
 function CalendarEventView({
   event,
   isDragged,
   onDelete,
-}: {
-  event: CalendarEvent;
-  isDragged: boolean;
-  onDelete: () => void;
-}) {
+}: CalendarEventViewProps) {
   const weekday = event.start.getDay();
 
   return (
@@ -66,11 +68,11 @@ function CalendarEventView({
         </div>
 
         <p
-          className={`text-blue-500 ${
+          className={`text-blue-500 font-semibold ${
             isDragged ? "text-blue-700" : "group-hover:text-blue-700"
           }`}
         >
-          <p className="text-blue-700 font-semibold">{event.title}</p>
+          {event.title}
         </p>
       </div>
     </li>

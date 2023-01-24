@@ -66,8 +66,8 @@ function Calendar({ events, setEvents }: CalendarProps) {
 
     const cell = getCell(
       {
-        x: 56,
-        y: 48 + cellHeight,
+        x: window.scrollX - convertRemToPixels(3.5), // CalendarTimeScale on left has width of 3.5rem
+        y: window.scrollY - (48 + cellHeight), // CalendarWeekdayNames + Spacer on top has height of 48px
       },
       {
         width: cellSize.width,
