@@ -3,6 +3,8 @@ type CalendarEvent = {
   title: string;
   start: Date;
   end: Date;
+  onClick?: () => void;
+  onDelete?: () => void;
 };
 
 type Cell = {

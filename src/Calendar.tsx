@@ -1,4 +1,4 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 
 import CalendarEventView from "./CalendarEventView";
 import CalendarTimeScale from "./CalendarTimeScale";
@@ -10,6 +10,8 @@ import { convertRemToPixels, copyDateWith, getCell } from "./utils";
 type CalendarProps = {
   events: CalendarEvent[];
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
+  cellHeight?: number;
+  scrollToCurrentTime?: boolean;
 };
 
 type CurrentEvent = {
@@ -17,19 +19,33 @@ type CurrentEvent = {
   isNew: boolean;
 };
 
-const cellHeight = convertRemToPixels(3);
+const defaultCellHeight = convertRemToPixels(3);
 
-function Calendar({ events, setEvents }: CalendarProps) {
+function Calendar({
+  events,
+  setEvents,
+  cellHeight = defaultCellHeight,
+  scrollToCurrentTime = false,
+}: CalendarProps) {
   const [weekStart, setWeekStart] = useState(new Date(2023, 0, 2));
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
   const [cell, setCell] = useState<Cell | null>(null);
 
+  const containerEl = useRef<HTMLDivElement | null>(null);
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
   const cellWidthMeasurementEl = useRef<HTMLDivElement | null>(null);
   const cellSize = useElementSize(cellWidthMeasurementEl);
 
+  useEffect(() => {
+    if (containerEl.current && scrollToCurrentTime) {
+      const currentMinute = new Date().getHours() * 60;
+      containerEl.current.scrollTop =
+        (containerEl.current.scrollHeight * currentMinute) / 1440;
+    }
+  }, [containerEl.current]);
+
   const onMouseDown = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (!cell || e.target !== eventsGridEl.current) {
+    if (e.button !== 0 || e.target !== eventsGridEl.current || !cell) {
       return;
     }
 
@@ -60,14 +76,17 @@ function Calendar({ events, setEvents }: CalendarProps) {
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (!cellSize) {
+    if (!(cellSize && containerEl.current)) {
       return;
     }
 
     const cell = getCell(
       {
-        x: window.scrollX - convertRemToPixels(3.5), // CalendarTimeScale on left has width of 3.5rem
-        y: window.scrollY - (48 + cellHeight), // CalendarWeekdayNames + Spacer on top has height of 48px
+        x:
+          window.scrollX +
+          containerEl.current.scrollLeft -
+          convertRemToPixels(3.5), // CalendarTimeScale on left has width of 3.5rem
+        y: window.scrollY + containerEl.current.scrollTop - (48 + cellHeight), // CalendarWeekdayNames + Spacer on top has height of 48px
       },
       {
         width: cellSize.width,
@@ -112,10 +131,13 @@ function Calendar({ events, setEvents }: CalendarProps) {
   return (
     <>
       <div className="flex h-full flex-col">
-        <div className="select-none isolate flex flex-auto flex-col overflow-auto shadow md:rounded-lg bg-white">
+        <div
+          ref={containerEl}
+          className="scroll-smooth select-none isolate flex flex-auto flex-col overflow-auto bg-white"
+        >
           <div
             style={{ width: "165%" }}
-            className="flex max-w-full flex-none flex-col sm:max-w-none md:max-w-full"
+            className="flex max-w-full flex-none flex-col"
           >
             <CalendarWeekdayNames />
 

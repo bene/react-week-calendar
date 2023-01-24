@@ -39,7 +39,9 @@ function CalendarEventView({
   const weekday = event.start.getDay();
 
   return (
+    // rome-ignore lint/a11y/useKeyWithClickEvents: TODO
     <li
+      onClick={event.onClick}
       className={`relative mt-px hidden sm:flex ${weekdayClasses[weekday]}`}
       style={{
         gridRow: dateSpanToGridRowSpan(event.start, event.end),
@@ -61,7 +63,12 @@ function CalendarEventView({
 
           <button
             className={`hidden${isDragged ? "" : " group-hover:block"}`}
-            onClick={onDelete}
+            onClick={() => {
+              if (event.onDelete) {
+                event.onDelete();
+              }
+              onDelete();
+            }}
           >
             <TrashIcon className="text-blue-700 cursor-pointer" />
           </button>
