@@ -16,6 +16,7 @@ type CalendarProps = {
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
   cellHeight?: number;
   scrollToCurrentTime?: boolean;
+  renderEvent?: (event: CalendarEvent) => React.ReactNode;
 };
 
 type CurrentEvent = {
@@ -30,6 +31,7 @@ function Calendar({
   setEvents,
   cellHeight = defaultCellHeight,
   scrollToCurrentTime = false,
+  renderEvent,
 }: CalendarProps) {
   const [weekStart, setWeekStart] = useState(new Date(2023, 0, 2));
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
@@ -50,28 +52,33 @@ function Calendar({
   }, [containerEl.current]);
 
   const onMouseDown = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (e.button !== 0 || e.target !== eventsGridEl.current || !cell) {
+    if (e.button !== 0 || !cell) {
       return;
     }
 
-    const hours = Math.floor(cell.hour);
-    const minutes = (cell.hour % 1) * 60;
+    if (e.target === eventsGridEl.current) {
+      const hours = Math.floor(cell.hour);
+      const minutes = (cell.hour % 1) * 60;
 
-    const start = copyDateWith(weekStart, {
-      date: weekStart.getDate() + (cell.day - 1),
-      hours,
-      minutes,
-    });
+      const start = copyDateWith(weekStart, {
+        date: weekStart.getDate() + (cell.day - 1),
+        hours,
+        minutes,
+      });
 
-    const newEvent: CalendarEvent = {
-      id: crypto.randomUUID(),
-      title: "New Event",
-      start: new Date(start),
-      end: copyDateWith(start, { minutes: 30 }),
-    };
+      const newEvent: CalendarEvent = {
+        id: crypto.randomUUID(),
+        title: "New Event",
+        start: new Date(start),
+        end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
+      };
 
-    setEvents([...events, newEvent]);
-    setCurrentEvent({ id: newEvent.id, isNew: true });
+      setEvents([...events, newEvent]);
+      setCurrentEvent({ id: newEvent.id, isNew: true });
+      return;
+    }
+
+    setCurrentEvent({ id: "0x2", isNew: false });
   };
 
   const onMouseUp = () => {
@@ -107,21 +114,44 @@ function Calendar({
       return;
     }
 
+    if (currentEvent.isNew) {
+      setEvents(
+        events.map((event) => {
+          if (event.id === currentEvent.id) {
+            return {
+              ...event,
+              start: currentEvent.isNew
+                ? event.start
+                : copyDateWith(event.start, {
+                    hours: Math.floor(cell.hour),
+                    minutes: (cell.hour % 1) * 60,
+                  }),
+              end: copyDateWith(event.end, {
+                hours: Math.floor(cell.hour),
+                minutes: (cell.hour % 1) * 60 + 30,
+              }),
+            };
+          }
+
+          return event;
+        })
+      );
+      return;
+    }
+
     setEvents(
       events.map((event) => {
         if (event.id === currentEvent.id) {
+          const duration = event.end.getTime() - event.start.getTime();
+          const newStart = copyDateWith(event.start, {
+            hours: Math.floor(cell.hour),
+            minutes: (cell.hour % 1) * 60,
+          });
+
           return {
             ...event,
-            start: currentEvent.isNew
-              ? event.start
-              : copyDateWith(event.start, {
-                  hours: Math.floor(cell.hour),
-                  minutes: (cell.hour % 1) * 60,
-                }),
-            end: copyDateWith(event.end, {
-              hours: Math.floor(cell.hour),
-              minutes: (cell.hour % 1) * 60 + 30,
-            }),
+            start: newStart,
+            end: new Date(newStart.getTime() + duration),
           };
         }
 
@@ -139,7 +169,9 @@ function Calendar({
       <div className="flex h-full w-full">
         <div
           ref={containerEl}
-          className="scroll-smooth select-none isolate flex flex-auto flex-col overflow-auto"
+          className={`scroll-smooth isolate flex flex-auto flex-col overflow-auto${
+            currentEvent ? " select-none" : ""
+          }`}
         >
           <div
             style={{ width: "165%" }}
@@ -176,6 +208,7 @@ function Calendar({
                         event={event}
                         isDragged={currentEvent?.id === event.id}
                         onDelete={() => deleteEvent(event.id)}
+                        renderEvent={renderEvent}
                       />
                     </Fragment>
                   ))}

@@ -16,26 +16,32 @@ const timeFormat = new Intl.DateTimeFormat(navigator.language, {
   minute: "2-digit",
 });
 
-function dateSpanToGridRowSpan(start: Date, end: Date) {
-  const startHour = start.getHours() + start.getMinutes() / 60;
-  const eventDurationInHours =
-    (end.getTime() - start.getTime()) / 1000 / 60 / 60;
+function minutesToDecimalHours(minutes: number): number {
+  return Math.ceil((minutes / 60) * 4) / 4;
+}
 
-  return `${Math.round(startHour * 12 + 2)} / span ${
-    eventDurationInHours * 12
-  }`;
+function dateSpanToGridRowSpan(start: Date, end: Date) {
+  const startMinutes = start.getHours() * 60 + start.getMinutes();
+  const durationInMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
+
+  const hours = minutesToDecimalHours(startMinutes);
+  const durationHours = minutesToDecimalHours(durationInMinutes);
+
+  return `${hours * 12 + 2} / span ${durationHours * 12}`;
 }
 
 type CalendarEventViewProps = {
   event: CalendarEvent;
   isDragged: boolean;
   onDelete: () => void;
+  renderEvent?: (event: CalendarEvent) => React.ReactNode;
 };
 
 function CalendarEventView({
   event,
   isDragged,
   onDelete,
+  renderEvent,
 }: CalendarEventViewProps) {
   const weekday = event.start.getDay();
 
@@ -55,33 +61,39 @@ function CalendarEventView({
             : "bg-blue-50 hover:bg-blue-100 cursor-grab"
         }`}
       >
-        <div className="flex gap-2 items-center justify-between">
-          <p className="text-blue-500 group-hover:text-blue-700">
-            <time dateTime="2022-01-12T06:00">
-              {timeFormat.format(event.start)}
-            </time>
-          </p>
+        {renderEvent ? (
+          renderEvent(event)
+        ) : (
+          <>
+            <div className="flex gap-2 items-center justify-between">
+              <p className="text-blue-500 group-hover:text-blue-700">
+                <time dateTime="2022-01-12T06:00">
+                  {timeFormat.format(event.start)}
+                </time>
+              </p>
 
-          <button
-            className={`hidden${isDragged ? "" : " group-hover:block"}`}
-            onClick={() => {
-              if (event.onDelete) {
-                event.onDelete();
-              }
-              onDelete();
-            }}
-          >
-            <TrashIcon className="text-blue-700 cursor-pointer" />
-          </button>
-        </div>
+              <button
+                className={`hidden${isDragged ? "" : " group-hover:block"}`}
+                onClick={() => {
+                  if (event.onDelete) {
+                    event.onDelete();
+                  }
+                  onDelete();
+                }}
+              >
+                <TrashIcon className="text-blue-700 cursor-pointer" />
+              </button>
+            </div>
 
-        <p
-          className={`text-blue-500 font-semibold ${
-            isDragged ? "text-blue-700" : "group-hover:text-blue-700"
-          }`}
-        >
-          {event.title}
-        </p>
+            <p
+              className={`text-blue-500 font-semibold ${
+                isDragged ? "text-blue-700" : "group-hover:text-blue-700"
+              }`}
+            >
+              {event.title}
+            </p>
+          </>
+        )}
       </div>
     </li>
   );
