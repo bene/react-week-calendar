@@ -1,10 +1,6 @@
 import { useState } from "react";
 import Calendar, { CalendarEvent } from "../../core/src";
 
-function convertRemToPixels(rem: number) {
-  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-}
-
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([
     {
@@ -23,11 +19,7 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
-      <Calendar
-        events={events}
-        setEvents={setEvents}
-        cellHeight={convertRemToPixels(2)}
-      />
+      <Calendar events={events} setEvents={setEvents} />
     </div>
   );
 }
