@@ -22,7 +22,9 @@ function minutesToDecimalHours(minutes: number): number {
 
 function dateSpanToGridRowSpan(start: Date, end: Date) {
   const startMinutes = start.getHours() * 60 + start.getMinutes();
-  const durationInMinutes = (end.getTime() - start.getTime()) / 1000 / 60;
+  const durationInMinutes = Math.ceil(
+    (end.getTime() - start.getTime()) / 1000 / 60
+  );
 
   const hours = minutesToDecimalHours(startMinutes);
   const durationHours = minutesToDecimalHours(durationInMinutes);

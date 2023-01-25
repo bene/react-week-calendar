@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import Calendar, { CalendarEvent } from "../../core/src";
 
-import Calendar from "../src/Calendar";
-import { CalendarEvent } from "../src/types";
-import { convertRemToPixels } from "../src/utils";
+function convertRemToPixels(rem: number) {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+}
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([

@@ -21,7 +21,7 @@ function getCell(
   const posY = y - offset.y + scroll.y;
 
   const day = Math.ceil((posX / (cellSize.width * 7)) * 7);
-  const hour = Math.floor((posY / (cellSize.height * 48)) * 48) / 2;
+  const hour = Math.floor(posY / (cellSize.height / 2)) / 4;
 
   return {
     day,

@@ -6,7 +6,7 @@ A zero dependency week calendar for React.
 
 ## Desktop features
 
-- [ ] Create event
+- [x] Create event
 - [ ] Delete event
 - [ ] Move event
 - [ ] Change week

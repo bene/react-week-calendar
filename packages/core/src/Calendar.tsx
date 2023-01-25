@@ -6,7 +6,7 @@ import CalendarWeekdayNames from "./CalendarWeekdayNames";
 import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
-import { CalendarEvent, Cell } from "./types";
+import { CalendarEvent } from "./types";
 import { convertRemToPixels, copyDateWith, getCell } from "./utils";
 
 const _twInclude = "h-screen w-screen";
@@ -21,7 +21,7 @@ type CalendarProps = {
 
 type CurrentEvent = {
   id: string;
-  isNew: boolean;
+  state: "new" | "move" | "extendStart" | "extendEnd";
 };
 
 const defaultCellHeight = convertRemToPixels(3);
@@ -35,7 +35,6 @@ function Calendar({
 }: CalendarProps) {
   const [weekStart, setWeekStart] = useState(new Date(2023, 0, 2));
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
-  const [cell, setCell] = useState<Cell | null>(null);
 
   const containerEl = useRef<HTMLDivElement | null>(null);
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
@@ -52,43 +51,12 @@ function Calendar({
   }, [containerEl.current]);
 
   const onMouseDown = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (e.button !== 0 || !cell) {
-      return;
-    }
-
-    if (e.target === eventsGridEl.current) {
-      const hours = Math.floor(cell.hour);
-      const minutes = (cell.hour % 1) * 60;
-
-      const start = copyDateWith(weekStart, {
-        date: weekStart.getDate() + (cell.day - 1),
-        hours,
-        minutes,
-      });
-
-      const newEvent: CalendarEvent = {
-        id: crypto.randomUUID(),
-        title: "New Event",
-        start: new Date(start),
-        end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
-      };
-
-      setEvents([...events, newEvent]);
-      setCurrentEvent({ id: newEvent.id, isNew: true });
-      return;
-    }
-
-    setCurrentEvent({ id: "0x2", isNew: false });
-  };
-
-  const onMouseUp = () => {
-    if (currentEvent) {
-      setCurrentEvent(null);
-    }
-  };
-
-  const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (!(cellSize && containerEl.current && eventsGridOffset)) {
+    if (
+      e.button !== 0 ||
+      !cellSize ||
+      !eventsGridOffset ||
+      !containerEl.current
+    ) {
       return;
     }
 
@@ -108,56 +76,105 @@ function Calendar({
       e.clientX,
       e.clientY
     );
-    setCell(cell);
 
-    if (!currentEvent) {
+    if (e.target === eventsGridEl.current) {
+      const hours = cell.hour;
+      const minutes = (cell.hour % 1) * 60;
+
+      const start = copyDateWith(weekStart, {
+        date: weekStart.getDate() + (cell.day - 1),
+        hours,
+        minutes,
+      });
+
+      const newEvent: CalendarEvent = {
+        id: crypto.randomUUID(),
+        title: "New Event",
+        start: new Date(start),
+        end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
+      };
+
+      setEvents([...events, newEvent]);
+      setCurrentEvent({ id: newEvent.id, state: "new" });
       return;
     }
 
-    if (currentEvent.isNew) {
-      setEvents(
-        events.map((event) => {
-          if (event.id === currentEvent.id) {
-            return {
-              ...event,
-              start: currentEvent.isNew
-                ? event.start
-                : copyDateWith(event.start, {
-                    hours: Math.floor(cell.hour),
-                    minutes: (cell.hour % 1) * 60,
-                  }),
-              end: copyDateWith(event.end, {
-                hours: Math.floor(cell.hour),
-                minutes: (cell.hour % 1) * 60 + 30,
-              }),
-            };
-          }
+    setCurrentEvent({ id: "0x2", state: "move" });
+  };
 
-          return event;
-        })
-      );
+  const onMouseUp = () => {
+    if (currentEvent) {
+      setCurrentEvent(null);
+    }
+  };
+
+  const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
+    if (
+      !(currentEvent && cellSize && eventsGridOffset && containerEl.current)
+    ) {
       return;
     }
 
-    setEvents(
-      events.map((event) => {
+    const cell = getCell(
+      {
+        x: eventsGridOffset.x,
+        y: eventsGridOffset.y + cellHeight,
+      },
+      {
+        x: containerEl.current.scrollLeft + window.scrollX,
+        y: containerEl.current.scrollTop + window.scrollY,
+      },
+      {
+        width: cellSize.width,
+        height: cellHeight,
+      },
+      e.clientX,
+      e.clientY
+    );
+
+    if (currentEvent.state === "new") {
+      const newEvents = events.map((event) => {
+        if (event.id === currentEvent.id) {
+          return {
+            ...event,
+            start: event.start,
+            end: copyDateWith(event.end, {
+              hours: cell.hour,
+              minutes: (cell.hour % 1) * 60 + 30,
+            }),
+          };
+        }
+
+        return event;
+      });
+
+      return void setEvents(newEvents);
+    }
+
+    if (currentEvent.state === "move") {
+      const newEvents = events.map((event) => {
         if (event.id === currentEvent.id) {
           const duration = event.end.getTime() - event.start.getTime();
           const newStart = copyDateWith(event.start, {
-            hours: Math.floor(cell.hour),
+            hours: cell.hour,
             minutes: (cell.hour % 1) * 60,
+          });
+          const newEnd = copyDateWith(newStart, {
+            milliseconds: newStart.getMilliseconds() + duration,
           });
 
           return {
             ...event,
             start: newStart,
-            end: new Date(newStart.getTime() + duration),
+            end: newEnd,
           };
         }
 
         return event;
-      })
-    );
+      });
+
+      return void setEvents(newEvents);
+    }
   };
 
   const deleteEvent = (id: string) => {
