@@ -1,6 +1,7 @@
 {
-  "name": "mono",
+  "name": "@react-headless-calendar/mono",
   "version": "1.0.0",
+  "private": true,
   "workspaces": [
     "packages/*"
   ]
