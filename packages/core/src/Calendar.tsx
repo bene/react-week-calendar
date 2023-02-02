@@ -14,6 +14,8 @@ const _twInclude = "h-screen w-screen";
 type CalendarProps = {
   events: CalendarEvent[];
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
+  interactive?: boolean;
+  abstract?: boolean;
   cellHeight?: number;
   scrollToCurrentTime?: boolean;
   renderEvent?: (event: CalendarEvent) => React.ReactNode;
@@ -30,8 +32,10 @@ function Calendar({
   events,
   setEvents,
   cellHeight = defaultCellHeight,
-  scrollToCurrentTime = false,
   renderEvent,
+  abstract = false,
+  interactive = true,
+  scrollToCurrentTime = false,
 }: CalendarProps) {
   const [weekStart, setWeekStart] = useState(new Date(2023, 0, 2));
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
