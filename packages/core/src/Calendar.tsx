@@ -69,7 +69,13 @@ function Calendar({
   }, [containerEl.current]);
 
   const onMouseDown = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (e.button !== 0 || !cellSize || !eventsGridOffset || !containerEl.current) {
+    if (
+      e.button !== 0 ||
+      !interactive ||
+      !cellSize ||
+      !eventsGridOffset ||
+      !containerEl.current
+    ) {
       return;
     }
 
@@ -122,7 +128,15 @@ function Calendar({
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (!(currentEvent && cellSize && eventsGridOffset && containerEl.current)) {
+    if (
+      !(
+        interactive &&
+        currentEvent &&
+        cellSize &&
+        eventsGridOffset &&
+        containerEl.current
+      )
+    ) {
       return;
     }
 
@@ -232,8 +246,9 @@ function Calendar({
                   onMouseUp={onMouseUp}
                   onMouseMove={onMouseMove}
                   className={classList(
+                    interactive && "cursor-grab",
                     `grid-cols-${daysPerWeek}`,
-                    "col-start-1 col-end-2 row-start-1 grid cursor-grab"
+                    "col-start-1 col-end-2 row-start-1 grid"
                   )}
                   style={{
                     gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
