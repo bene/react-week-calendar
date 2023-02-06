@@ -2,10 +2,17 @@ import { Fragment } from "react";
 
 type CalendarTimeScaleProps = {
   cellHeight: number;
+  hoursPerDay: number;
+  hoursOffset: number;
 };
 
-function CalendarTimeScale({ cellHeight }: CalendarTimeScaleProps) {
-  const hourRowViews = Array.from(Array(24).keys()).map(hour => {
+function CalendarTimeScale({
+  cellHeight,
+  hoursPerDay,
+  hoursOffset,
+}: CalendarTimeScaleProps) {
+  const hourRowViews = Array.from(Array(hoursPerDay).keys()).map(i => {
+    const hour = i + hoursOffset;
     return (
       <Fragment key={hour}>
         <div>
@@ -23,7 +30,7 @@ function CalendarTimeScale({ cellHeight }: CalendarTimeScaleProps) {
       <div
         className="col-start-1 col-end-2 row-start-1 grid divide-y divide-gray-100"
         style={{
-          gridTemplateRows: `repeat(48, minmax(${cellHeight}px, 1fr))`,
+          gridTemplateRows: `repeat(${hoursPerDay * 2}, minmax(${cellHeight}px, 1fr))`,
         }}
       >
         <div className="row-end-1 h-7" />

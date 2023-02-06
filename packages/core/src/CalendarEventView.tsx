@@ -20,11 +20,11 @@ function minutesToDecimalHours(minutes: number): number {
   return Math.ceil((minutes / 60) * 4) / 4;
 }
 
-function dateSpanToGridRowSpan(start: Date, end: Date) {
+function dateSpanToGridRowSpan(start: Date, end: Date, hoursOffset: number) {
   const startMinutes = start.getHours() * 60 + start.getMinutes();
   const durationInMinutes = Math.ceil((end.getTime() - start.getTime()) / 1000 / 60);
 
-  const hours = minutesToDecimalHours(startMinutes);
+  const hours = minutesToDecimalHours(startMinutes) - hoursOffset;
   const durationHours = minutesToDecimalHours(durationInMinutes);
 
   return `${hours * 12 + 2} / span ${durationHours * 12}`;
@@ -32,16 +32,16 @@ function dateSpanToGridRowSpan(start: Date, end: Date) {
 
 type CalendarEventViewProps = {
   event: CalendarEvent;
+  hoursOffset: number;
   isDragged: boolean;
-  daysPerWeek: number;
   onDelete: () => void;
   renderEvent?: (event: CalendarEvent) => React.ReactNode;
 };
 
 function CalendarEventView({
   event,
+  hoursOffset,
   isDragged,
-  daysPerWeek,
   onDelete,
   renderEvent,
 }: CalendarEventViewProps) {
@@ -53,7 +53,7 @@ function CalendarEventView({
       onClick={event.onClick}
       className={`relative mt-px hidden sm:flex ${weekdayClasses[weekday]}`}
       style={{
-        gridRow: dateSpanToGridRowSpan(event.start, event.end),
+        gridRow: dateSpanToGridRowSpan(event.start, event.end, hoursOffset),
       }}
     >
       <div

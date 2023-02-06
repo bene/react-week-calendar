@@ -13,7 +13,9 @@ const _twInclude = "h-screen w-screen";
 
 type CalendarProps = {
   startDate: Date;
-  daysPerWeek: number;
+  daysPerWeek?: number;
+  hoursPerDay?: number;
+  hoursOffset?: number;
   events: CalendarEvent[];
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
   interactive?: boolean;
@@ -37,6 +39,8 @@ function Calendar({
   cellHeight = defaultCellHeight,
   renderEvent,
   daysPerWeek = 7,
+  hoursPerDay = 24,
+  hoursOffset = 0,
   abstract = false,
   interactive = true,
   scrollToCurrentTime = false,
@@ -203,7 +207,11 @@ function Calendar({
               <div className="sticky left-0 z-10 w-14 flex-none ring-1 ring-gray-100" />
               <div className="grid flex-auto grid-cols-1 grid-rows-1">
                 {/* Horizontal lines */}
-                <CalendarTimeScale cellHeight={cellHeight} />
+                <CalendarTimeScale
+                  cellHeight={cellHeight}
+                  hoursPerDay={hoursPerDay}
+                  hoursOffset={hoursOffset}
+                />
 
                 {/* Vertical lines */}
                 <CalendarWeekScale
@@ -229,9 +237,9 @@ function Calendar({
                     <Fragment key={event.id}>
                       <CalendarEventView
                         event={event}
-                        daysPerWeek={daysPerWeek}
-                        isDragged={currentEvent?.id === event.id}
+                        hoursOffset={hoursOffset}
                         onDelete={() => deleteEvent(event.id)}
+                        isDragged={currentEvent?.id === event.id}
                         renderEvent={renderEvent}
                       />
                     </Fragment>
