@@ -6,14 +6,14 @@ function App() {
     {
       id: "0x1",
       title: "Meeting",
-      start: new Date(1971, 0, 4, 1, 30, 0),
-      end: new Date(1971, 0, 4, 5, 30, 0),
+      start: new Date(2023, 0, 2, 1, 30, 0),
+      end: new Date(2023, 0, 2, 5, 30, 0),
     },
     {
       id: "0x2",
       title: "Cinema",
-      start: new Date(1971, 0, 6, 3, 0, 0),
-      end: new Date(1971, 0, 6, 5, 0, 0),
+      start: new Date(2023, 0, 4, 3, 0, 0),
+      end: new Date(2023, 0, 4, 5, 0, 0),
     },
   ]);
 

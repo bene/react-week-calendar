@@ -45,7 +45,13 @@ function Calendar({
   interactive = true,
   scrollToCurrentTime = false,
 }: CalendarProps) {
-  const [weekStart, setWeekStart] = useState(new Date(2023, 0, 2));
+  const endDate = copyDateWith(startDate, {
+    date: startDate.getDate() + daysPerWeek - 1,
+    hours: 23,
+    minutes: 59,
+    second: 59,
+    milliseconds: 999,
+  });
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
 
   const containerEl = useRef<HTMLDivElement | null>(null);
@@ -88,8 +94,8 @@ function Calendar({
       const hours = cell.hour;
       const minutes = (cell.hour % 1) * 60;
 
-      const start = copyDateWith(weekStart, {
-        date: weekStart.getDate() + (cell.day - 1),
+      const start = copyDateWith(startDate, {
+        date: startDate.getDate() + (cell.day - 1),
         hours,
         minutes,
       });
@@ -233,17 +239,19 @@ function Calendar({
                     gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
                   }}
                 >
-                  {events.map(event => (
-                    <Fragment key={event.id}>
-                      <CalendarEventView
-                        event={event}
-                        hoursOffset={hoursOffset}
-                        onDelete={() => deleteEvent(event.id)}
-                        isDragged={currentEvent?.id === event.id}
-                        renderEvent={renderEvent}
-                      />
-                    </Fragment>
-                  ))}
+                  {events
+                    .filter(event => event.start >= startDate && event.end <= endDate)
+                    .map(event => (
+                      <Fragment key={event.id}>
+                        <CalendarEventView
+                          event={event}
+                          hoursOffset={hoursOffset}
+                          onDelete={() => deleteEvent(event.id)}
+                          isDragged={currentEvent?.id === event.id}
+                          renderEvent={renderEvent}
+                        />
+                      </Fragment>
+                    ))}
                 </ol>
               </div>
             </div>
