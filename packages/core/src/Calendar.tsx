@@ -9,7 +9,17 @@ import useElementOffset from "./useElementOffset";
 import { CalendarEvent } from "./types";
 import { classList, convertRemToPixels, copyDateWith, getCell } from "./utils";
 
-const _twInclude = "h-screen w-screen";
+const _twInclude = [
+  "h-screen",
+  "w-screen",
+  "grid-cols-1",
+  "grid-cols-2",
+  "grid-cols-3",
+  "grid-cols-4",
+  "grid-cols-5",
+  "grid-cols-6",
+  "grid-cols-7",
+];
 
 type CalendarProps = {
   startDate: Date;
@@ -92,6 +102,8 @@ function Calendar({
         width: cellSize.width,
         height: cellHeight,
       },
+      daysPerWeek,
+      hoursOffset,
       e.clientX,
       e.clientY
     );
@@ -153,6 +165,8 @@ function Calendar({
         width: cellSize.width,
         height: cellHeight,
       },
+      daysPerWeek,
+      hoursOffset,
       e.clientX,
       e.clientY
     );
@@ -251,7 +265,9 @@ function Calendar({
                     "col-start-1 col-end-2 row-start-1 grid"
                   )}
                   style={{
-                    gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
+                    gridTemplateRows: `1.75rem repeat(${
+                      12 * hoursPerDay
+                    }, minmax(0, 1fr)) auto`,
                   }}
                 >
                   {events
@@ -260,6 +276,7 @@ function Calendar({
                       <Fragment key={event.id}>
                         <CalendarEventView
                           event={event}
+                          hoursPerDay={hoursPerDay}
                           hoursOffset={hoursOffset}
                           onDelete={() => deleteEvent(event.id)}
                           isDragged={currentEvent?.id === event.id}

@@ -20,18 +20,26 @@ function minutesToDecimalHours(minutes: number): number {
   return Math.ceil((minutes / 60) * 4) / 4;
 }
 
-function dateSpanToGridRowSpan(start: Date, end: Date, hoursOffset: number) {
+function dateSpanToGridRowSpan(
+  start: Date,
+  end: Date,
+  hoursPerDay: number,
+  hoursOffset: number
+) {
   const startMinutes = start.getHours() * 60 + start.getMinutes();
   const durationInMinutes = Math.ceil((end.getTime() - start.getTime()) / 1000 / 60);
 
   const hours = minutesToDecimalHours(startMinutes) - hoursOffset;
   const durationHours = minutesToDecimalHours(durationInMinutes);
 
+  console.log("hours", hours);
+
   return `${hours * 12 + 2} / span ${durationHours * 12}`;
 }
 
 type CalendarEventViewProps = {
   event: CalendarEvent;
+  hoursPerDay: number;
   hoursOffset: number;
   isDragged: boolean;
   onDelete: () => void;
@@ -40,6 +48,7 @@ type CalendarEventViewProps = {
 
 function CalendarEventView({
   event,
+  hoursPerDay,
   hoursOffset,
   isDragged,
   onDelete,
@@ -53,7 +62,7 @@ function CalendarEventView({
       onClick={event.onClick}
       className={`relative mt-px hidden sm:flex ${weekdayClasses[weekday]}`}
       style={{
-        gridRow: dateSpanToGridRowSpan(event.start, event.end, hoursOffset),
+        gridRow: dateSpanToGridRowSpan(event.start, event.end, hoursPerDay, hoursOffset),
       }}
     >
       <div
