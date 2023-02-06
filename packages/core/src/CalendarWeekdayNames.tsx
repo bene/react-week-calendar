@@ -1,29 +1,63 @@
-function CalendarWeekdayNames() {
+import { useMemo } from "react";
+import { classList } from "./utils";
+
+type CalendarWeekdayNamesProps = {
+  startDate: Date;
+  format: "long" | "short" | "narrow";
+  abstract: boolean;
+  daysPerWeek: number;
+};
+
+function CalendarWeekdayNames({
+  startDate,
+  format,
+  abstract,
+  daysPerWeek,
+}: CalendarWeekdayNamesProps) {
+  const dayFormat = useMemo(() => {
+    return new Intl.DateTimeFormat(navigator.language, {
+      weekday: format,
+    });
+  }, []);
+
+  const dateFormat = useMemo(() => {
+    return new Intl.DateTimeFormat(navigator.language, {
+      day: "2-digit",
+    });
+  }, []);
+
+  const dayViews = Array.from(Array(daysPerWeek).keys())
+    .map(day => {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + day);
+      return date;
+    })
+    .map(dayDate => (
+      <div className="flex items-center justify-center py-3">
+        <span>
+          {dayFormat.format(dayDate)}
+          {!abstract && (
+            <>
+              {" "}
+              <span className="items-center justify-center font-semibold text-gray-900">
+                {dateFormat.format(dayDate)}
+              </span>
+            </>
+          )}
+        </span>
+      </div>
+    ));
+
   return (
     <div className="sticky top-0 z-30 flex-none bg-white shadow ring-1 ring-black ring-opacity-5">
-      <div className="-mr-px grid grid-cols-7 divide-x divide-gray-100 border-r border-gray-100 text-sm leading-6 text-gray-500">
+      <div
+        className={classList(
+          `grid-cols-${daysPerWeek}`,
+          "-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm leading-6 text-gray-500"
+        )}
+      >
         <div className="col-end-1 w-14" />
-        <div className="flex items-center justify-center py-3">
-          <span>Montag</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span>Dienstag</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span className="flex items-baseline">Mittwoch</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span>Donnerstag</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span>Freitag</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span>Samstag</span>
-        </div>
-        <div className="flex items-center justify-center py-3">
-          <span>Sonntag</span>
-        </div>
+        {dayViews}
       </div>
     </div>
   );

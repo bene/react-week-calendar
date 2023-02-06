@@ -7,11 +7,13 @@ import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
 import { CalendarEvent } from "./types";
-import { convertRemToPixels, copyDateWith, getCell } from "./utils";
+import { classList, convertRemToPixels, copyDateWith, getCell } from "./utils";
 
 const _twInclude = "h-screen w-screen";
 
 type CalendarProps = {
+  startDate: Date;
+  daysPerWeek: number;
   events: CalendarEvent[];
   setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
   interactive?: boolean;
@@ -29,10 +31,12 @@ type CurrentEvent = {
 const defaultCellHeight = convertRemToPixels(3);
 
 function Calendar({
+  startDate,
   events,
   setEvents,
   cellHeight = defaultCellHeight,
   renderEvent,
+  daysPerWeek = 7,
   abstract = false,
   interactive = true,
   scrollToCurrentTime = false,
@@ -55,12 +59,7 @@ function Calendar({
   }, [containerEl.current]);
 
   const onMouseDown = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (
-      e.button !== 0 ||
-      !cellSize ||
-      !eventsGridOffset ||
-      !containerEl.current
-    ) {
+    if (e.button !== 0 || !cellSize || !eventsGridOffset || !containerEl.current) {
       return;
     }
 
@@ -113,9 +112,7 @@ function Calendar({
   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLOListElement>) => {
-    if (
-      !(currentEvent && cellSize && eventsGridOffset && containerEl.current)
-    ) {
+    if (!(currentEvent && cellSize && eventsGridOffset && containerEl.current)) {
       return;
     }
 
@@ -137,7 +134,7 @@ function Calendar({
     );
 
     if (currentEvent.state === "new") {
-      const newEvents = events.map((event) => {
+      const newEvents = events.map(event => {
         if (event.id === currentEvent.id) {
           return {
             ...event,
@@ -156,7 +153,7 @@ function Calendar({
     }
 
     if (currentEvent.state === "move") {
-      const newEvents = events.map((event) => {
+      const newEvents = events.map(event => {
         if (event.id === currentEvent.id) {
           const duration = event.end.getTime() - event.start.getTime();
           const newStart = copyDateWith(event.start, {
@@ -182,7 +179,7 @@ function Calendar({
   };
 
   const deleteEvent = (id: string) => {
-    setEvents(events.filter((event) => event.id !== id));
+    setEvents(events.filter(event => event.id !== id));
   };
 
   return (
@@ -190,15 +187,17 @@ function Calendar({
       <div className="flex h-full w-full">
         <div
           ref={containerEl}
-          className={`scroll-smooth isolate flex flex-auto flex-col overflow-auto${
+          className={`isolate flex flex-auto flex-col scroll-smooth overflow-auto${
             currentEvent ? " select-none" : ""
           }`}
         >
-          <div
-            style={{ width: "165%" }}
-            className="flex max-w-full flex-none flex-col"
-          >
-            <CalendarWeekdayNames />
+          <div style={{ width: "165%" }} className="flex max-w-full flex-none flex-col">
+            <CalendarWeekdayNames
+              startDate={startDate}
+              abstract={abstract}
+              daysPerWeek={daysPerWeek}
+              format="short"
+            />
 
             <div className="flex flex-auto">
               <div className="sticky left-0 z-10 w-14 flex-none ring-1 ring-gray-100" />
@@ -208,6 +207,7 @@ function Calendar({
 
                 {/* Vertical lines */}
                 <CalendarWeekScale
+                  daysPerWeek={daysPerWeek}
                   cellWidthMeasurementElement={cellWidthMeasurementEl}
                 />
 
@@ -217,16 +217,19 @@ function Calendar({
                   onMouseDown={onMouseDown}
                   onMouseUp={onMouseUp}
                   onMouseMove={onMouseMove}
-                  className="cursor-grab col-start-1 col-end-2 row-start-1 grid grid-cols-1 sm:grid-cols-7"
+                  className={classList(
+                    `grid-cols-${daysPerWeek}`,
+                    "col-start-1 col-end-2 row-start-1 grid cursor-grab"
+                  )}
                   style={{
-                    gridTemplateRows:
-                      "1.75rem repeat(288, minmax(0, 1fr)) auto",
+                    gridTemplateRows: "1.75rem repeat(288, minmax(0, 1fr)) auto",
                   }}
                 >
-                  {events.map((event) => (
+                  {events.map(event => (
                     <Fragment key={event.id}>
                       <CalendarEventView
                         event={event}
+                        daysPerWeek={daysPerWeek}
                         isDragged={currentEvent?.id === event.id}
                         onDelete={() => deleteEvent(event.id)}
                         renderEvent={renderEvent}

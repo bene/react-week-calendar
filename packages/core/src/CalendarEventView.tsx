@@ -22,9 +22,7 @@ function minutesToDecimalHours(minutes: number): number {
 
 function dateSpanToGridRowSpan(start: Date, end: Date) {
   const startMinutes = start.getHours() * 60 + start.getMinutes();
-  const durationInMinutes = Math.ceil(
-    (end.getTime() - start.getTime()) / 1000 / 60
-  );
+  const durationInMinutes = Math.ceil((end.getTime() - start.getTime()) / 1000 / 60);
 
   const hours = minutesToDecimalHours(startMinutes);
   const durationHours = minutesToDecimalHours(durationInMinutes);
@@ -35,6 +33,7 @@ function dateSpanToGridRowSpan(start: Date, end: Date) {
 type CalendarEventViewProps = {
   event: CalendarEvent;
   isDragged: boolean;
+  daysPerWeek: number;
   onDelete: () => void;
   renderEvent?: (event: CalendarEvent) => React.ReactNode;
 };
@@ -42,6 +41,7 @@ type CalendarEventViewProps = {
 function CalendarEventView({
   event,
   isDragged,
+  daysPerWeek,
   onDelete,
   renderEvent,
 }: CalendarEventViewProps) {
@@ -57,21 +57,19 @@ function CalendarEventView({
       }}
     >
       <div
-        className={`group absolute inset-1 rounded flex flex-col overflow-y-auto p-2 text-xs leading-5 ${
+        className={`group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5 ${
           isDragged
-            ? "bg-blue-100 cursor-grabbing"
-            : "bg-blue-50 hover:bg-blue-100 cursor-grab"
+            ? "cursor-grabbing bg-blue-100"
+            : "cursor-grab bg-blue-50 hover:bg-blue-100"
         }`}
       >
         {renderEvent ? (
           renderEvent(event)
         ) : (
           <>
-            <div className="flex gap-2 items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <p className="text-blue-500 group-hover:text-blue-700">
-                <time dateTime="2022-01-12T06:00">
-                  {timeFormat.format(event.start)}
-                </time>
+                <time dateTime="2022-01-12T06:00">{timeFormat.format(event.start)}</time>
               </p>
 
               <button
@@ -83,12 +81,12 @@ function CalendarEventView({
                   onDelete();
                 }}
               >
-                <TrashIcon className="text-blue-700 cursor-pointer" />
+                <TrashIcon className="cursor-pointer text-blue-700" />
               </button>
             </div>
 
             <p
-              className={`text-blue-500 font-semibold ${
+              className={`font-semibold text-blue-500 ${
                 isDragged ? "text-blue-700" : "group-hover:text-blue-700"
               }`}
             >

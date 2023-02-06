@@ -19,7 +19,13 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
-      <Calendar events={events} setEvents={setEvents} />
+      <Calendar
+        startDate={new Date(2023, 0, 2)}
+        events={events}
+        setEvents={setEvents}
+        daysPerWeek={5}
+        abstract
+      />
     </div>
   );
 }

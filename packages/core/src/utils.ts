@@ -67,4 +67,8 @@ function convertRemToPixels(rem: number) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
-export { getCell, copyDateWith, convertRemToPixels };
+function classList(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export { getCell, copyDateWith, convertRemToPixels, classList };

@@ -6,9 +6,7 @@ type Size = {
 };
 
 function useElementSize(ref: React.MutableRefObject<HTMLElement | null>) {
-  let [size, setSize] = useState<Size | null>(
-    ref.current ? getSize(ref.current) : null
-  );
+  let [size, setSize] = useState<Size | null>(ref.current ? getSize(ref.current) : null);
 
   function handleResize() {
     if (ref.current) {

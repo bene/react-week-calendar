@@ -5,7 +5,7 @@ type CalendarTimeScaleProps = {
 };
 
 function CalendarTimeScale({ cellHeight }: CalendarTimeScaleProps) {
-  const hourRowViews = Array.from(Array(24).keys()).map((hour) => {
+  const hourRowViews = Array.from(Array(24).keys()).map(hour => {
     return (
       <Fragment key={hour}>
         <div>
