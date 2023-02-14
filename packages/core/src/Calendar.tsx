@@ -63,12 +63,24 @@ function Calendar({
     milliseconds: 999,
   });
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
+  const [containerScrollTop, setContainerScrollTop] = useState(0);
 
   const containerEl = useRef<HTMLDivElement | null>(null);
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
   const cellWidthMeasurementEl = useRef<HTMLDivElement | null>(null);
   const cellSize = useElementSize(cellWidthMeasurementEl);
   const eventsGridOffset = useElementOffset(eventsGridEl);
+
+  useEffect(() => {
+    if (containerEl.current) {
+      const setValue = () => {
+        setContainerScrollTop(containerEl.current!.scrollTop);
+      };
+
+      containerEl.current.addEventListener("scroll", setValue);
+      return () => containerEl.current?.removeEventListener("scroll", setValue);
+    }
+  }, [containerEl.current]);
 
   useEffect(() => {
     if (containerEl.current && scrollToCurrentTime) {
@@ -235,6 +247,7 @@ function Calendar({
               abstract={abstract}
               daysPerWeek={daysPerWeek}
               format="short"
+              showShadow={containerScrollTop >= 3}
             />
 
             <div className="flex flex-auto">

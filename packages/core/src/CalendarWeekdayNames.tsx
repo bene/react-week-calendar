@@ -5,6 +5,7 @@ type CalendarWeekdayNamesProps = {
   startDate: Date;
   format: "long" | "short" | "narrow";
   abstract: boolean;
+  showShadow: boolean;
   daysPerWeek: number;
 };
 
@@ -13,6 +14,7 @@ function CalendarWeekdayNames({
   format,
   abstract,
   daysPerWeek,
+  showShadow,
 }: CalendarWeekdayNamesProps) {
   const dayFormat = useMemo(() => {
     return new Intl.DateTimeFormat(navigator.language, {
@@ -49,7 +51,12 @@ function CalendarWeekdayNames({
     ));
 
   return (
-    <div className="sticky top-0 z-30 flex-none bg-white shadow ring-1 ring-black ring-opacity-5">
+    <div
+      className={classList(
+        showShadow && "shadow",
+        "sticky top-0 z-30 flex-none bg-white ring-1 ring-black ring-opacity-5 transition-shadow"
+      )}
+    >
       <div
         className={classList(
           `grid-cols-${daysPerWeek}`,
