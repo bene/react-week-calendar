@@ -276,6 +276,7 @@ function Calendar({
                       <Fragment key={event.id}>
                         <CalendarEventView
                           event={event}
+                          interactive={interactive}
                           hoursPerDay={hoursPerDay}
                           hoursOffset={hoursOffset}
                           onDelete={() => deleteEvent(event.id)}

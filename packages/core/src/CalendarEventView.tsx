@@ -1,5 +1,6 @@
 import TrashIcon from "./TrashIcon";
 import { CalendarEvent } from "./types";
+import { classList } from "./utils";
 
 const weekdayClasses = [
   "sm:col-start-7",
@@ -42,6 +43,7 @@ type CalendarEventViewProps = {
   hoursPerDay: number;
   hoursOffset: number;
   isDragged: boolean;
+  interactive: boolean;
   onDelete: () => void;
   renderEvent?: (event: CalendarEvent) => React.ReactNode;
 };
@@ -53,6 +55,7 @@ function CalendarEventView({
   isDragged,
   onDelete,
   renderEvent,
+  interactive,
 }: CalendarEventViewProps) {
   const weekday = event.start.getDay();
 
@@ -66,23 +69,31 @@ function CalendarEventView({
       }}
     >
       <div
-        className={`group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5 ${
-          isDragged
-            ? "cursor-grabbing bg-blue-100"
-            : "cursor-grab bg-blue-50 hover:bg-blue-100"
-        }`}
+        className={classList(
+          "group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5",
+          isDragged ? "cursor-grabbing bg-blue-100" : "bg-blue-50",
+          interactive && !isDragged && "cursor-grab hover:bg-blue-100"
+        )}
       >
         {renderEvent ? (
           renderEvent(event)
         ) : (
           <>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-blue-500 group-hover:text-blue-700">
+              <p
+                className={classList(
+                  "text-blue-500",
+                  interactive && "group-hover:text-blue-700"
+                )}
+              >
                 <time dateTime="2022-01-12T06:00">{timeFormat.format(event.start)}</time>
               </p>
 
               <button
-                className={`hidden${isDragged ? "" : " group-hover:block"}`}
+                className={classList(
+                  "hidden",
+                  isDragged && interactive && "group-hover:block"
+                )}
                 onClick={() => {
                   if (event.onDelete) {
                     event.onDelete();
@@ -95,9 +106,11 @@ function CalendarEventView({
             </div>
 
             <p
-              className={`font-semibold text-blue-500 ${
-                isDragged ? "text-blue-700" : "group-hover:text-blue-700"
-              }`}
+              className={classList(
+                "font-semibold text-blue-500",
+                isDragged && "text-blue-700",
+                interactive && !isDragged && "group-hover:text-blue-700"
+              )}
             >
               {event.title}
             </p>
