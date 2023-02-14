@@ -71,8 +71,8 @@ function CalendarEventView({
       <div
         className={classList(
           "group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5",
-          isDragged ? "cursor-grabbing bg-blue-100" : "bg-blue-50",
-          interactive && !isDragged && "cursor-grab hover:bg-blue-100"
+          isDragged ? "cursor-grabbing bg-teal-100" : "bg-teal-50",
+          interactive && !isDragged && "cursor-grab hover:bg-teal-100"
         )}
       >
         {renderEvent ? (
@@ -82,8 +82,8 @@ function CalendarEventView({
             <div className="flex items-center justify-between gap-2">
               <p
                 className={classList(
-                  "text-blue-500",
-                  interactive && "group-hover:text-blue-700"
+                  "text-teal-500",
+                  interactive && "group-hover:text-teal-700"
                 )}
               >
                 <time dateTime="2022-01-12T06:00">{timeFormat.format(event.start)}</time>
@@ -101,15 +101,15 @@ function CalendarEventView({
                   onDelete();
                 }}
               >
-                <TrashIcon className="cursor-pointer text-blue-700" />
+                <TrashIcon className="cursor-pointer text-teal-700" />
               </button>
             </div>
 
             <p
               className={classList(
-                "font-semibold text-blue-500",
-                isDragged && "text-blue-700",
-                interactive && !isDragged && "group-hover:text-blue-700"
+                "font-semibold text-teal-500",
+                isDragged && "text-teal-700",
+                interactive && !isDragged && "group-hover:text-teal-700"
               )}
             >
               {event.title}
