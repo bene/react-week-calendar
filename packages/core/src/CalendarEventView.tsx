@@ -33,8 +33,6 @@ function dateSpanToGridRowSpan(
   const hours = minutesToDecimalHours(startMinutes) - hoursOffset;
   const durationHours = minutesToDecimalHours(durationInMinutes);
 
-  console.log("hours", hours);
-
   return `${hours * 12 + 2} / span ${durationHours * 12}`;
 }
 

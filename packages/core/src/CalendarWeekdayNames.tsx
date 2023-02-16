@@ -60,7 +60,7 @@ function CalendarWeekdayNames({
       <div
         className={classList(
           `grid-cols-${daysPerWeek}`,
-          "-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm leading-6 text-gray-500"
+          "grid divide-x divide-gray-100 text-sm leading-6 text-gray-500 "
         )}
       >
         <div className="col-end-1 w-14" />
