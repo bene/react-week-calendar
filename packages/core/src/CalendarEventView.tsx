@@ -66,55 +66,53 @@ function CalendarEventView({
         gridRow: dateSpanToGridRowSpan(event.start, event.end, hoursPerDay, hoursOffset),
       }}
     >
-      <div
-        className={classList(
-          "group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5",
-          isDragged ? "cursor-grabbing bg-teal-100" : "bg-teal-50",
-          interactive && !isDragged && "cursor-grab hover:bg-teal-100"
-        )}
-      >
-        {renderEvent ? (
-          renderEvent(event)
-        ) : (
-          <>
-            <div className="flex items-center justify-between gap-2">
-              <p
-                className={classList(
-                  "text-teal-500",
-                  interactive && "group-hover:text-teal-700"
-                )}
-              >
-                <time dateTime="2022-01-12T06:00">{timeFormat.format(event.start)}</time>
-              </p>
-
-              <button
-                className={classList(
-                  "hidden",
-                  isDragged && interactive && "group-hover:block"
-                )}
-                onClick={() => {
-                  if (event.onDelete) {
-                    event.onDelete();
-                  }
-                  onDelete();
-                }}
-              >
-                <TrashIcon className="cursor-pointer text-teal-700" />
-              </button>
-            </div>
-
+      {renderEvent ? (
+        <div className="absolute inset-0">{renderEvent(event)}</div>
+      ) : (
+        <div
+          className={classList(
+            "group absolute inset-1 flex flex-col overflow-y-auto rounded p-2 text-xs leading-5",
+            isDragged ? "cursor-grabbing bg-teal-100" : "bg-teal-50",
+            interactive && !isDragged && "cursor-grab hover:bg-teal-100"
+          )}
+        >
+          <div className="flex items-center justify-between gap-2">
             <p
               className={classList(
-                "font-semibold text-teal-500",
-                isDragged && "text-teal-700",
-                interactive && !isDragged && "group-hover:text-teal-700"
+                "text-teal-500",
+                interactive && "group-hover:text-teal-700"
               )}
             >
-              {event.title}
+              <time dateTime="2022-01-12T06:00">{timeFormat.format(event.start)}</time>
             </p>
-          </>
-        )}
-      </div>
+
+            <button
+              className={classList(
+                "hidden",
+                isDragged && interactive && "group-hover:block"
+              )}
+              onClick={() => {
+                if (event.onDelete) {
+                  event.onDelete();
+                }
+                onDelete();
+              }}
+            >
+              <TrashIcon className="cursor-pointer text-teal-700" />
+            </button>
+          </div>
+
+          <p
+            className={classList(
+              "font-semibold text-teal-500",
+              isDragged && "text-teal-700",
+              interactive && !isDragged && "group-hover:text-teal-700"
+            )}
+          >
+            {event.title}
+          </p>
+        </div>
+      )}
     </li>
   );
 }

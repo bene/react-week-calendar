@@ -1,5 +1,5 @@
 {
-  "name": "example",
+  "name": "@react-headless-calendar/example",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "dev": "npm -w \"packages/example\" run dev"
   }
 }
