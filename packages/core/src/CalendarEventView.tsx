@@ -46,7 +46,7 @@ type CalendarEventViewProps<T> = {
   renderEvent?: (event: T & CalendarEvent) => React.ReactNode;
 };
 
-function CalendarEventView<T>({
+function CalendarEventView<T = {}>({
   event,
   hoursPerDay,
   hoursOffset,

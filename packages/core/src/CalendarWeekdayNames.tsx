@@ -35,7 +35,10 @@ function CalendarWeekdayNames({
       return date;
     })
     .map(dayDate => (
-      <div className="flex items-center justify-center py-3">
+      <div
+        key={dayFormat.format(dayDate)}
+        className="flex items-center justify-center py-3"
+      >
         <span>
           {dayFormat.format(dayDate)}
           {!abstract && (
