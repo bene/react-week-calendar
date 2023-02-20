@@ -21,18 +21,18 @@ const _twInclude = [
   "grid-cols-7",
 ];
 
-type CalendarProps = {
+type CalendarProps<T> = {
   startDate: Date;
   daysPerWeek?: number;
   hoursPerDay?: number;
   hoursOffset?: number;
-  events: CalendarEvent[];
-  setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
+  events: (T & CalendarEvent)[];
+  setEvents: React.Dispatch<React.SetStateAction<(T & CalendarEvent)[]>>;
   interactive?: boolean;
   abstract?: boolean;
   cellHeight?: number;
   scrollToCurrentTime?: boolean;
-  renderEvent?: (event: CalendarEvent) => React.ReactNode;
+  renderEvent?: (event: T & CalendarEvent) => React.ReactNode;
 };
 
 type CurrentEvent = {
@@ -42,7 +42,7 @@ type CurrentEvent = {
 
 const defaultCellHeight = convertRemToPixels(3);
 
-function Calendar({
+function Calendar<T>({
   startDate,
   events,
   setEvents,
@@ -54,7 +54,7 @@ function Calendar({
   abstract = false,
   interactive = true,
   scrollToCurrentTime = false,
-}: CalendarProps) {
+}: CalendarProps<T>) {
   const endDate = copyDateWith(startDate, {
     date: startDate.getDate() + daysPerWeek - 1,
     hours: 23,
@@ -130,15 +130,15 @@ function Calendar({
         minutes,
       });
 
-      const newEvent: CalendarEvent = {
-        id: crypto.randomUUID(),
-        title: "New Event",
-        start: new Date(start),
-        end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
-      };
+      // const newEvent: T & CalendarEvent = {
+      //   id: crypto.randomUUID(),
+      //   title: "New Event",
+      //   start: new Date(start),
+      //   end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
+      // };
 
-      setEvents([...events, newEvent]);
-      setCurrentEvent({ id: newEvent.id, state: "new" });
+      // setEvents([...events, newEvent]);
+      // setCurrentEvent({ id: newEvent.id, state: "new" });
       return;
     }
 

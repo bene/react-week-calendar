@@ -36,17 +36,17 @@ function dateSpanToGridRowSpan(
   return `${hours * 12 + 2} / span ${durationHours * 12}`;
 }
 
-type CalendarEventViewProps = {
-  event: CalendarEvent;
+type CalendarEventViewProps<T> = {
+  event: T & CalendarEvent;
   hoursPerDay: number;
   hoursOffset: number;
   isDragged: boolean;
   interactive: boolean;
   onDelete: () => void;
-  renderEvent?: (event: CalendarEvent) => React.ReactNode;
+  renderEvent?: (event: T & CalendarEvent) => React.ReactNode;
 };
 
-function CalendarEventView({
+function CalendarEventView<T>({
   event,
   hoursPerDay,
   hoursOffset,
@@ -54,7 +54,7 @@ function CalendarEventView({
   onDelete,
   renderEvent,
   interactive,
-}: CalendarEventViewProps) {
+}: CalendarEventViewProps<T>) {
   const weekday = event.start.getDay();
 
   return (
