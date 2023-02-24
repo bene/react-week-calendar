@@ -32,17 +32,11 @@ type CalendarBaseProps = {
   scrollToCurrentTime?: boolean;
 };
 
-type CalendarProps = CalendarBaseProps & {
-  events: CalendarEvent[];
-  setEvents: React.Dispatch<React.SetStateAction<CalendarEvent[]>>;
-  renderEvent?: (event: CalendarEvent) => React.ReactNode;
-};
-
-type CalendarPropsWithGenertic<T> = CalendarBaseProps & {
-  events: (T & CalendarEvent)[];
-  setEvents: React.Dispatch<React.SetStateAction<(T & CalendarEvent)[]>>;
-  createNewCustomEvent: (event: CalendarEvent) => T & CalendarEvent;
-  renderCustomEvent?: (event: T & CalendarEvent) => React.ReactNode;
+type CalendarProps<T extends CalendarEvent> = CalendarBaseProps & {
+  events: T[];
+  setEvents: React.Dispatch<React.SetStateAction<T[]>>;
+  onCreateEvent: (event: CalendarEvent) => T;
+  renderEvent?: (event: T) => React.ReactNode;
 };
 
 type CurrentEvent = {
@@ -52,8 +46,9 @@ type CurrentEvent = {
 
 const defaultCellHeight = convertRemToPixels(3);
 
-function Calendar<T>({
+function Calendar<T extends CalendarEvent = CalendarEvent>({
   startDate,
+  onCreateEvent,
   cellHeight = defaultCellHeight,
   daysPerWeek = 7,
   hoursPerDay = 24,
@@ -62,7 +57,7 @@ function Calendar<T>({
   interactive = true,
   scrollToCurrentTime = false,
   ...props
-}: CalendarProps | CalendarPropsWithGenertic<T>) {
+}: CalendarProps<T>) {
   const endDate = copyDateWith(startDate, {
     date: startDate.getDate() + daysPerWeek - 1,
     hours: 23,
@@ -145,14 +140,8 @@ function Calendar<T>({
         end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
       };
 
-      if ("createNewCustomEvent" in props) {
-        const newCustomEvent = props.createNewCustomEvent(newEvent);
-        props.setEvents([...props.events, newCustomEvent]);
-        setCurrentEvent({ id: newEvent.id, state: "new" });
-        return;
-      }
-
-      props.setEvents([...props.events, newEvent]);
+      const newCustomEvent = onCreateEvent(newEvent);
+      props.setEvents([...props.events, newCustomEvent]);
       setCurrentEvent({ id: newEvent.id, state: "new" });
       return;
     }
@@ -315,17 +304,13 @@ function Calendar<T>({
                       <Fragment key={event.id}>
                         <CalendarEventView
                           // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-                          event={event as any}
+                          event={event}
                           interactive={interactive}
                           hoursPerDay={hoursPerDay}
                           hoursOffset={hoursOffset}
                           onDelete={() => deleteEvent(event.id)}
                           isDragged={currentEvent?.id === event.id}
-                          renderEvent={
-                            "createNewCustomEvent" in props
-                              ? props.renderCustomEvent
-                              : props.renderEvent
-                          }
+                          renderEvent={props.renderEvent}
                         />
                       </Fragment>
                     ))}
