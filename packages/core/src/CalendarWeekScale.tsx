@@ -11,6 +11,7 @@ function CalendarWeekScale({
 }: CalendarWeekScaleProps) {
   const columnViews = Array.from(Array(daysPerWeek).keys()).map(i => (
     <div
+      key={i}
       ref={i === 0 ? cellWidthMeasurementElement : null}
       className={`col-start-${i + 1} row-span-full`}
     />
