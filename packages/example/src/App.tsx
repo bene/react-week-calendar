@@ -6,17 +6,31 @@ type EventWithType = CalendarEvent & { type: "Work" | "Leisure" };
 function App() {
   const [events, setEvents] = useState<EventWithType[]>([
     {
-      id: "0x1",
+      id: crypto.randomUUID(),
       title: "Meeting",
       start: new Date(2023, 0, 2, 1, 30, 0),
       end: new Date(2023, 0, 2, 5, 30, 0),
       type: "Work",
     },
     {
-      id: "0x2",
+      id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 4, 3, 0, 0),
+      start: new Date(2023, 0, 4, 3, 5, 0),
       end: new Date(2023, 0, 4, 5, 0, 0),
+      type: "Leisure",
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Cinema",
+      start: new Date(2023, 0, 5, 3, 15, 0),
+      end: new Date(2023, 0, 5, 5, 0, 0),
+      type: "Leisure",
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Cinema",
+      start: new Date(2023, 0, 6, 3, 30, 0),
+      end: new Date(2023, 0, 6, 5, 0, 0),
       type: "Leisure",
     },
   ]);

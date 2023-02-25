@@ -25,7 +25,7 @@ type CalendarBaseProps = {
   startDate: Date;
   daysPerWeek?: number;
   hoursPerDay?: number;
-  hoursOffset?: number;
+  minutesOffset?: number;
   interactive?: boolean;
   abstract?: boolean;
   cellHeight?: number;
@@ -52,7 +52,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   cellHeight = defaultCellHeight,
   daysPerWeek = 7,
   hoursPerDay = 24,
-  hoursOffset = 0,
+  minutesOffset = 0,
   abstract = false,
   interactive = true,
   scrollToCurrentTime = false,
@@ -118,7 +118,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
         height: cellHeight,
       },
       daysPerWeek,
-      hoursOffset,
+      minutesOffset,
       e.clientX,
       e.clientY
     );
@@ -182,7 +182,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
         height: cellHeight,
       },
       daysPerWeek,
-      hoursOffset,
+      minutesOffset,
       e.clientX,
       e.clientY
     );
@@ -272,7 +272,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                 <CalendarTimeScale
                   cellHeight={cellHeight}
                   hoursPerDay={hoursPerDay}
-                  hoursOffset={hoursOffset}
+                  minutesOffset={minutesOffset}
                 />
 
                 {/* Vertical lines */}
@@ -294,7 +294,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                   )}
                   style={{
                     gridTemplateRows: `1.75rem repeat(${
-                      12 * hoursPerDay
+                      60 * hoursPerDay
                     }, minmax(0, 1fr)) auto`,
                   }}
                 >
@@ -306,7 +306,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                           event={event}
                           interactive={interactive}
                           hoursPerDay={hoursPerDay}
-                          hoursOffset={hoursOffset}
+                          minutesOffset={minutesOffset}
                           onDelete={() => deleteEvent(event.id)}
                           isDragged={currentEvent?.id === event.id}
                           renderEvent={props.renderEvent}

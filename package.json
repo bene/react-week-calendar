@@ -8,5 +8,8 @@
   "scripts": {
     "fmt": "prettier --write .",
     "dev": "npm -w \"packages/example\" run dev"
+  },
+  "dependencies": {
+    "date-fns": "^2.29.3"
   }
 }

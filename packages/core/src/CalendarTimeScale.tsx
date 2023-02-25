@@ -3,16 +3,16 @@ import { Fragment } from "react";
 type CalendarTimeScaleProps = {
   cellHeight: number;
   hoursPerDay: number;
-  hoursOffset: number;
+  minutesOffset: number;
 };
 
 function CalendarTimeScale({
   cellHeight,
   hoursPerDay,
-  hoursOffset,
+  minutesOffset,
 }: CalendarTimeScaleProps) {
   const hourRowViews = Array.from(Array(hoursPerDay).keys()).map(i => {
-    const hour = i + hoursOffset;
+    const hour = i + minutesOffset / 60;
     return (
       <Fragment key={hour}>
         <div>

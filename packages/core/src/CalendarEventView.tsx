@@ -1,6 +1,7 @@
 import TrashIcon from "./TrashIcon";
 import { CalendarEvent } from "./types";
 import { classList } from "./utils";
+import { differenceInMinutes, startOfDay } from "date-fns";
 
 const weekdayClasses = [
   "sm:col-start-7",
@@ -17,24 +18,18 @@ const timeFormat = new Intl.DateTimeFormat(navigator.language, {
   minute: "2-digit",
 });
 
-function minutesToDecimalHours(minutes: number): number {
-  return Math.ceil((minutes / 60) * 4) / 4;
-}
+function dateSpanToGridRowSpan(start: Date, end: Date, minutesOffset: number) {
+  const startOffsetInMinutes =
+    minutesOffset + differenceInMinutes(start, startOfDay(start));
+  const durationInMinutes = differenceInMinutes(end, start);
 
-function dateSpanToGridRowSpan(start: Date, end: Date, hoursOffset: number) {
-  const startMinutes = start.getHours() * 60 + start.getMinutes();
-  const durationInMinutes = Math.ceil((end.getTime() - start.getTime()) / 1000 / 60);
-
-  const hours = minutesToDecimalHours(startMinutes) - hoursOffset;
-  const durationHours = minutesToDecimalHours(durationInMinutes);
-
-  return `${hours * 12 + 2} / span ${durationHours * 12}`;
+  return `${startOffsetInMinutes + 2} / span ${durationInMinutes}`;
 }
 
 type CalendarEventViewProps<T> = {
   event: T & CalendarEvent;
   hoursPerDay: number;
-  hoursOffset: number;
+  minutesOffset: number;
   isDragged: boolean;
   interactive: boolean;
   onDelete: () => void;
@@ -44,7 +39,7 @@ type CalendarEventViewProps<T> = {
 function CalendarEventView<T extends CalendarEvent>({
   event,
   hoursPerDay,
-  hoursOffset,
+  minutesOffset,
   isDragged,
   onDelete,
   renderEvent,
@@ -58,7 +53,7 @@ function CalendarEventView<T extends CalendarEvent>({
       onClick={event.onClick}
       className={`relative mt-px hidden sm:flex ${weekdayClasses[weekday]}`}
       style={{
-        gridRow: dateSpanToGridRowSpan(event.start, event.end, hoursOffset),
+        gridRow: dateSpanToGridRowSpan(event.start, event.end, minutesOffset),
       }}
     >
       {!isDragged && (
@@ -69,7 +64,7 @@ function CalendarEventView<T extends CalendarEvent>({
         {renderEvent ? (
           renderEvent(event)
         ) : (
-          <div className="h-full w-full p-1">
+          <div className="h-full w-full px-0.5">
             <div
               className={classList(
                 "h-full w-full overflow-y-auto rounded p-2 text-xs leading-5",
