@@ -24,8 +24,6 @@ function App() {
   return (
     <div className="h-screen w-screen">
       <Calendar
-        hoursPerDay={12}
-        hoursOffset={1}
         startDate={new Date(2023, 0, 2)}
         events={events}
         setEvents={setEvents}

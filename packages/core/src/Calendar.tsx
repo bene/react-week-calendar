@@ -288,7 +288,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                   onMouseUp={onMouseUp}
                   onMouseMove={onMouseMove}
                   className={classList(
-                    interactive && "cursor-grab",
+                    interactive && "cursor-cell",
                     `grid-cols-${daysPerWeek}`,
                     "col-start-1 col-end-2 row-start-1 grid"
                   )}
@@ -303,7 +303,6 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                     .map(event => (
                       <Fragment key={event.id}>
                         <CalendarEventView
-                          // rome-ignore lint/suspicious/noExplicitAny: <explanation>
                           event={event}
                           interactive={interactive}
                           hoursPerDay={hoursPerDay}
