@@ -57,7 +57,10 @@ function CalendarEventView<T extends CalendarEvent>({
       }}
     >
       {!isDragged && (
-        <div className="absolute -top-2 left-0 right-0 z-20 h-4 cursor-n-resize" />
+        <div
+          onMouseDown={() => console.log("Resize top")}
+          className="absolute -top-2 left-0 right-0 z-20 h-4 cursor-n-resize"
+        />
       )}
 
       <div className="absolute inset-0 z-10 overflow-hidden">
@@ -80,7 +83,9 @@ function CalendarEventView<T extends CalendarEvent>({
                   )}
                 >
                   <time dateTime="2022-01-12T06:00">
-                    {timeFormat.format(event.start)}
+                    {`${timeFormat.format(event.start)} - ${timeFormat.format(
+                      event.end
+                    )}`}
                   </time>
                 </p>
 
@@ -115,7 +120,10 @@ function CalendarEventView<T extends CalendarEvent>({
       </div>
 
       {!isDragged && (
-        <div className="absolute -bottom-2 left-0 right-0 z-20 h-4 cursor-s-resize" />
+        <div
+          onMouseDown={() => console.log("Resize bottom")}
+          className="absolute -bottom-2 left-0 right-0 z-20 h-4 cursor-s-resize"
+        />
       )}
     </li>
   );

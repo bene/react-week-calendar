@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
+import { set } from "date-fns";
 
 import CalendarEventView from "./CalendarEventView";
 import CalendarTimeScale from "./CalendarTimeScale";
@@ -58,11 +59,11 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   scrollToCurrentTime = false,
   ...props
 }: CalendarProps<T>) {
-  const endDate = copyDateWith(startDate, {
+  const endDate = set(startDate, {
     date: startDate.getDate() + daysPerWeek - 1,
     hours: 23,
     minutes: 59,
-    second: 59,
+    seconds: 59,
     milliseconds: 999,
   });
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
