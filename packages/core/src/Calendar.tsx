@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { add, set } from "date-fns";
+import add from "date-fns/add";
+import set from "date-fns/set";
 
 import CalendarEventView from "./CalendarEventView";
 import CalendarTimeScale from "./CalendarTimeScale";
