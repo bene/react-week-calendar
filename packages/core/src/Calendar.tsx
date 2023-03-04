@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from "react";
-import { set } from "date-fns";
+import { add, set } from "date-fns";
 
 import CalendarEventView from "./CalendarEventView";
 import CalendarTimeScale from "./CalendarTimeScale";
@@ -8,7 +8,7 @@ import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
 import { CalendarEvent, CurrentEvent } from "./types";
-import { classList, convertRemToPixels, copyDateWith, getCell } from "./utils";
+import { classList, convertRemToPixels, getCell } from "./utils";
 
 type CalendarBaseProps = {
   startDate: Date;
@@ -51,6 +51,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   });
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
   const [containerScrollTop, setContainerScrollTop] = useState(0);
+  const weekStartsOn = startDate.getDay();
 
   const containerEl = useRef<HTMLDivElement | null>(null);
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
@@ -115,7 +116,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       const hours = cell.hour;
       const minutes = (cell.hour % 1) * 60;
 
-      const start = copyDateWith(startDate, {
+      const start = set(startDate, {
         date: startDate.getDate() + (cell.day - 1),
         hours,
         minutes,
@@ -125,7 +126,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
         id: crypto.randomUUID(),
         title: "New Event",
         start: new Date(start),
-        end: copyDateWith(start, { minutes: start.getMinutes() + 30 }),
+        end: set(start, { minutes: start.getMinutes() + 30 }),
       };
 
       const newCustomEvent = onCreateEvent(newEvent);
@@ -174,7 +175,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
             return {
               ...event,
               start: event.start,
-              end: copyDateWith(event.end, {
+              end: set(event.end, {
                 hours: cell.hour,
                 minutes: (cell.hour % 1) * 60 + 30,
               }),
@@ -194,14 +195,19 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
         event => {
           if (event.id === currentEvent.id) {
             const duration = event.end.getTime() - event.start.getTime();
-            const newStart = copyDateWith(event.start, {
+            const newStart = set(event.start, {
+              date: event.start.getDate() + (cell.day - event.start.getDay()),
               hours: cell.hour,
               minutes: (cell.hour % 1) * 60,
             });
-            const newEnd = copyDateWith(newStart, {
+            const newEnd = set(newStart, {
+              date: event.start.getDate() + (cell.day - event.start.getDay()),
               milliseconds: newStart.getMilliseconds() + duration,
             });
 
+            console.log("cell", cell.day);
+            console.log(newStart.getDay());
+
             return {
               ...event,
               start: newStart,
@@ -217,51 +223,35 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       return void props.setEvents(newEvents as any);
     }
 
-    if (currentEvent.state === "extendStart") {
-      const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(
-        event => {
-          if (event.id === currentEvent.id) {
-            const newStart = copyDateWith(event.start, {
-              hours: cell.hour,
-              minutes: (cell.hour % 1) * 60,
-            });
+    const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(event => {
+      if (event.id === currentEvent.id) {
+        const start =
+          currentEvent.state === "extendStart"
+            ? set(event.start, {
+                hours: cell.hour,
+                minutes: (cell.hour % 1) * 60,
+              })
+            : event.start;
+        const end =
+          currentEvent.state === "extendEnd"
+            ? set(event.end, {
+                hours: cell.hour,
+                minutes: (cell.hour % 1) * 60,
+              })
+            : event.end;
 
-            return {
-              ...event,
-              start: newStart,
-            };
-          }
+        return {
+          ...event,
+          start,
+          end: end > start ? end : add(start, { minutes: 15 }),
+        };
+      }
 
-          return event;
-        }
-      );
+      return event;
+    });
 
-      // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-      return void props.setEvents(newEvents as any);
-    }
-
-    if (currentEvent.state === "extendEnd") {
-      const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(
-        event => {
-          if (event.id === currentEvent.id) {
-            const newEnd = copyDateWith(event.end, {
-              hours: cell.hour,
-              minutes: (cell.hour % 1) * 60,
-            });
-
-            return {
-              ...event,
-              end: newEnd,
-            };
-          }
-
-          return event;
-        }
-      );
-
-      // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-      return void props.setEvents(newEvents as any);
-    }
+    // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+    return void props.setEvents(newEvents as any);
   };
 
   const deleteEvent = (id: string) => {

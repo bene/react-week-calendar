@@ -1,15 +1,5 @@
 import { Cell } from "./types";
 
-type WithOptions = {
-  year?: number;
-  month?: number;
-  date?: number;
-  hours?: number;
-  minutes?: number;
-  second?: number;
-  milliseconds?: number;
-};
-
 function getCell(
   offset: { x: number; y: number },
   scroll: { x: number; y: number },
@@ -31,40 +21,6 @@ function getCell(
   };
 }
 
-function copyDateWith(date: Date, opts: WithOptions) {
-  const newDate = new Date(date);
-
-  if (opts.year) {
-    newDate.setFullYear(opts.year);
-  }
-
-  if (opts.month) {
-    newDate.setMonth(opts.month);
-  }
-
-  if (opts.date) {
-    newDate.setDate(opts.date);
-  }
-
-  if (opts.hours) {
-    newDate.setHours(opts.hours);
-  }
-
-  if (opts.minutes) {
-    newDate.setMinutes(opts.minutes);
-  }
-
-  if (opts.second) {
-    newDate.setSeconds(opts.second);
-  }
-
-  if (opts.milliseconds) {
-    newDate.setMilliseconds(opts.milliseconds);
-  }
-
-  return newDate;
-}
-
 function convertRemToPixels(rem: number) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
@@ -73,4 +29,4 @@ function classList(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export { getCell, copyDateWith, convertRemToPixels, classList };
+export { getCell, convertRemToPixels, classList };
