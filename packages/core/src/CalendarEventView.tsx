@@ -57,7 +57,7 @@ function CalendarEventView<T extends CalendarEvent>({
       }}
     >
       {!isDragged && (
-        <div className="absolute top-0 left-0 right-0 z-20 h-4 cursor-n-resize" />
+        <div className="absolute -top-2 left-0 right-0 z-20 h-4 cursor-n-resize" />
       )}
 
       <div className="absolute inset-0 z-10 overflow-hidden">
@@ -115,7 +115,7 @@ function CalendarEventView<T extends CalendarEvent>({
       </div>
 
       {!isDragged && (
-        <div className="absolute bottom-0 left-0 right-0 z-20 h-4 cursor-s-resize" />
+        <div className="absolute -bottom-2 left-0 right-0 z-20 h-4 cursor-s-resize" />
       )}
     </li>
   );
