@@ -7,20 +7,8 @@ import CalendarWeekdayNames from "./CalendarWeekdayNames";
 import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
-import { CalendarEvent } from "./types";
+import { CalendarEvent, CurrentEvent } from "./types";
 import { classList, convertRemToPixels, copyDateWith, getCell } from "./utils";
-
-const _twInclude = [
-  "h-screen",
-  "w-screen",
-  "grid-cols-1",
-  "grid-cols-2",
-  "grid-cols-3",
-  "grid-cols-4",
-  "grid-cols-5",
-  "grid-cols-6",
-  "grid-cols-7",
-];
 
 type CalendarBaseProps = {
   startDate: Date;
@@ -38,11 +26,6 @@ type CalendarProps<T extends CalendarEvent> = CalendarBaseProps & {
   setEvents: React.Dispatch<React.SetStateAction<T[]>>;
   onCreateEvent: (event: CalendarEvent) => T;
   renderEvent?: (event: T) => React.ReactNode;
-};
-
-type CurrentEvent = {
-  id: string;
-  state: "new" | "move" | "extendStart" | "extendEnd";
 };
 
 const defaultCellHeight = convertRemToPixels(3);
@@ -74,6 +57,10 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   const cellWidthMeasurementEl = useRef<HTMLDivElement | null>(null);
   const cellSize = useElementSize(cellWidthMeasurementEl);
   const eventsGridOffset = useElementOffset(eventsGridEl);
+
+  useEffect(() => {
+    console.log("currentEvent", currentEvent);
+  }, [currentEvent]);
 
   useEffect(() => {
     if (containerEl.current) {
@@ -145,14 +132,6 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       props.setEvents([...props.events, newCustomEvent]);
       setCurrentEvent({ id: newEvent.id, state: "new" });
       return;
-    }
-
-    setCurrentEvent({ id: "0x2", state: "move" });
-  };
-
-  const onMouseUp = () => {
-    if (currentEvent) {
-      setCurrentEvent(null);
     }
   };
 
@@ -237,6 +216,52 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       // rome-ignore lint/suspicious/noExplicitAny: <explanation>
       return void props.setEvents(newEvents as any);
     }
+
+    if (currentEvent.state === "extendStart") {
+      const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(
+        event => {
+          if (event.id === currentEvent.id) {
+            const newStart = copyDateWith(event.start, {
+              hours: cell.hour,
+              minutes: (cell.hour % 1) * 60,
+            });
+
+            return {
+              ...event,
+              start: newStart,
+            };
+          }
+
+          return event;
+        }
+      );
+
+      // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+      return void props.setEvents(newEvents as any);
+    }
+
+    if (currentEvent.state === "extendEnd") {
+      const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(
+        event => {
+          if (event.id === currentEvent.id) {
+            const newEnd = copyDateWith(event.end, {
+              hours: cell.hour,
+              minutes: (cell.hour % 1) * 60,
+            });
+
+            return {
+              ...event,
+              end: newEnd,
+            };
+          }
+
+          return event;
+        }
+      );
+
+      // rome-ignore lint/suspicious/noExplicitAny: <explanation>
+      return void props.setEvents(newEvents as any);
+    }
   };
 
   const deleteEvent = (id: string) => {
@@ -250,7 +275,11 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
 
   return (
     <>
-      <div className="flex h-full w-full">
+      <div
+        className="flex h-full w-full"
+        onMouseUp={() => setCurrentEvent(null)}
+        onMouseLeave={() => setCurrentEvent(null)}
+      >
         <div
           ref={containerEl}
           className={`isolate flex flex-auto flex-col scroll-smooth overflow-auto${
@@ -286,7 +315,6 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                 <ol
                   ref={eventsGridEl}
                   onMouseDown={onMouseDown}
-                  onMouseUp={onMouseUp}
                   onMouseMove={onMouseMove}
                   className={classList(
                     interactive && "cursor-cell",
@@ -311,6 +339,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                           onDelete={() => deleteEvent(event.id)}
                           isDragged={currentEvent?.id === event.id}
                           renderEvent={props.renderEvent}
+                          setAsCurrentEvent={setCurrentEvent}
                         />
                       </Fragment>
                     ))}

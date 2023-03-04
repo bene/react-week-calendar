@@ -1,7 +1,9 @@
-import TrashIcon from "./TrashIcon";
-import { CalendarEvent } from "./types";
-import { classList } from "./utils";
 import { differenceInMinutes, startOfDay } from "date-fns";
+import { useRef } from "react";
+
+import TrashIcon from "./TrashIcon";
+import { CalendarEvent, CurrentEvent } from "./types";
+import { classList } from "./utils";
 
 const weekdayClasses = [
   "sm:col-start-7",
@@ -32,6 +34,7 @@ type CalendarEventViewProps<T> = {
   minutesOffset: number;
   isDragged: boolean;
   interactive: boolean;
+  setAsCurrentEvent: (ce: CurrentEvent) => void;
   onDelete: () => void;
   renderEvent?: (event: T & CalendarEvent) => React.ReactNode;
 };
@@ -44,8 +47,10 @@ function CalendarEventView<T extends CalendarEvent>({
   onDelete,
   renderEvent,
   interactive,
+  setAsCurrentEvent,
 }: CalendarEventViewProps<T>) {
   const weekday = event.start.getDay();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     // rome-ignore lint/a11y/useKeyWithClickEvents: TODO
@@ -58,12 +63,26 @@ function CalendarEventView<T extends CalendarEvent>({
     >
       {!isDragged && (
         <div
-          onMouseDown={() => console.log("Resize top")}
+          onMouseDown={() =>
+            setAsCurrentEvent({
+              id: event.id,
+              state: "extendStart",
+            })
+          }
           className="absolute -top-2 left-0 right-0 z-20 h-4 cursor-n-resize"
         />
       )}
 
-      <div className="absolute inset-0 z-10 overflow-hidden">
+      <div
+        ref={containerRef}
+        onMouseDown={e => {
+          setAsCurrentEvent({
+            id: event.id,
+            state: "move",
+          });
+        }}
+        className="absolute inset-0 z-10 overflow-hidden"
+      >
         {renderEvent ? (
           renderEvent(event)
         ) : (
@@ -121,7 +140,12 @@ function CalendarEventView<T extends CalendarEvent>({
 
       {!isDragged && (
         <div
-          onMouseDown={() => console.log("Resize bottom")}
+          onMouseDown={() =>
+            setAsCurrentEvent({
+              id: event.id,
+              state: "extendEnd",
+            })
+          }
           className="absolute -bottom-2 left-0 right-0 z-20 h-4 cursor-s-resize"
         />
       )}

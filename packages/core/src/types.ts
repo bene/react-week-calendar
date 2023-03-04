@@ -12,6 +12,12 @@ export type Cell = {
   hour: number;
 };
 
+export type CurrentEventState = "new" | "move" | "extendStart" | "extendEnd";
+export type CurrentEvent = {
+  id: string;
+  state: CurrentEventState;
+};
+
 // type Cell = {
 //   day: 1 | 2 | 3 | 4 | 5 | 6 | 7;
 //   hour:
