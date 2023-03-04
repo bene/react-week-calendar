@@ -13,7 +13,7 @@ function getCell(
   const posY = y - offset.y + scroll.y;
 
   const day = Math.ceil((posX / (cellSize.width * daysPerWeek)) * daysPerWeek);
-  const hour = Math.floor(posY / (cellSize.height / 2)) / 4 + minutesOffset * 60;
+  const hour = Math.floor(posY / (cellSize.height / 2)) / 4 + minutesOffset / 60;
 
   return {
     dayIndex: day - 1,

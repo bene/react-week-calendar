@@ -8,36 +8,36 @@ function App() {
     {
       id: crypto.randomUUID(),
       title: "Meeting",
-      start: new Date(2023, 0, 2, 1, 30, 0),
-      end: new Date(2023, 0, 2, 5, 30, 0),
+      start: new Date(2023, 0, 2, 10, 30, 0),
+      end: new Date(2023, 0, 2, 12, 30, 0),
       type: "Work",
     },
     {
       id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 4, 3, 5, 0),
-      end: new Date(2023, 0, 4, 5, 0, 0),
+      start: new Date(2023, 0, 4, 13, 5, 0),
+      end: new Date(2023, 0, 4, 15, 0, 0),
       type: "Leisure",
     },
     {
       id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 4, 5, 0, 0),
-      end: new Date(2023, 0, 4, 6, 0, 0),
+      start: new Date(2023, 0, 4, 15, 0, 0),
+      end: new Date(2023, 0, 4, 16, 0, 0),
       type: "Leisure",
     },
     {
       id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 5, 3, 15, 0),
-      end: new Date(2023, 0, 5, 5, 0, 0),
+      start: new Date(2023, 0, 5, 13, 15, 0),
+      end: new Date(2023, 0, 5, 15, 0, 0),
       type: "Leisure",
     },
     {
       id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 6, 3, 30, 0),
-      end: new Date(2023, 0, 6, 5, 0, 0),
+      start: new Date(2023, 0, 6, 13, 30, 0),
+      end: new Date(2023, 0, 6, 15, 0, 0),
       type: "Leisure",
     },
   ]);
@@ -45,6 +45,8 @@ function App() {
   return (
     <div className="h-screen w-screen">
       <Calendar
+        minutesOffset={9 * 60}
+        hoursPerDay={24 - 9}
         startDate={new Date(2023, 0, 2)}
         events={events}
         setEvents={setEvents}

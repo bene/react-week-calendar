@@ -2,8 +2,8 @@ import { differenceInMinutes, startOfDay } from "date-fns";
 import { useRef } from "react";
 
 import TrashIcon from "./TrashIcon";
-import { CalendarEvent, CurrentEvent } from "./types";
 import { classList } from "./utils";
+import { CalendarEvent, CurrentEvent } from "./types";
 
 const weekdayClasses = [
   "sm:col-start-7",
@@ -22,7 +22,7 @@ const timeFormat = new Intl.DateTimeFormat(navigator.language, {
 
 function dateSpanToGridRowSpan(start: Date, end: Date, minutesOffset: number) {
   const startOffsetInMinutes =
-    minutesOffset + differenceInMinutes(start, startOfDay(start));
+    differenceInMinutes(start, startOfDay(start)) - minutesOffset;
   const durationInMinutes = differenceInMinutes(end, start);
 
   return `${startOffsetInMinutes + 2} / span ${durationInMinutes}`;
