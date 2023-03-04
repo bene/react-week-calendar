@@ -61,10 +61,6 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   const eventsGridOffset = useElementOffset(eventsGridEl);
 
   useEffect(() => {
-    console.log("currentEvent", currentEvent);
-  }, [currentEvent]);
-
-  useEffect(() => {
     if (containerEl.current) {
       const setValue = () => {
         setContainerScrollTop(containerEl.current!.scrollTop);
