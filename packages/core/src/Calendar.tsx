@@ -8,7 +8,7 @@ import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
 import { CalendarEvent, CurrentEvent } from "./types";
-import { classList, convertRemToPixels, getCell } from "./utils";
+import { classList, convertRemToPixels, getCell, getDayOffset } from "./utils";
 
 type CalendarBaseProps = {
   startDate: Date;
@@ -117,7 +117,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       const minutes = (cell.hour % 1) * 60;
 
       const start = set(startDate, {
-        date: startDate.getDate() + (cell.day - 1),
+        date: startDate.getDate() + cell.dayIndex,
         hours,
         minutes,
       });
@@ -194,19 +194,19 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       const newEvents: (CalendarEvent | (T & CalendarEvent))[] = props.events.map(
         event => {
           if (event.id === currentEvent.id) {
+            const date =
+              event.start.getDate() +
+              (cell.dayIndex - getDayOffset(weekStartsOn, event.start));
             const duration = event.end.getTime() - event.start.getTime();
             const newStart = set(event.start, {
-              date: event.start.getDate() + (cell.day - event.start.getDay()),
+              date,
               hours: cell.hour,
               minutes: (cell.hour % 1) * 60,
             });
             const newEnd = set(newStart, {
-              date: event.start.getDate() + (cell.day - event.start.getDay()),
+              date,
               milliseconds: newStart.getMilliseconds() + duration,
             });
-
-            console.log("cell", cell.day);
-            console.log(newStart.getDay());
 
             return {
               ...event,

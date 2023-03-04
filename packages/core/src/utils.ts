@@ -16,7 +16,7 @@ function getCell(
   const hour = Math.floor(posY / (cellSize.height / 2)) / 4 + minutesOffset * 60;
 
   return {
-    day,
+    dayIndex: day - 1,
     hour,
   };
 }
@@ -25,8 +25,12 @@ function convertRemToPixels(rem: number) {
   return rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 }
 
+function getDayOffset(weekStartsOn: number, date: Date) {
+  return (date.getDay() - weekStartsOn + 7) % 7;
+}
+
 function classList(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export { getCell, convertRemToPixels, classList };
+export { getCell, convertRemToPixels, getDayOffset, classList };
