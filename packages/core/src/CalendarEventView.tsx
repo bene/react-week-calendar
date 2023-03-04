@@ -61,7 +61,7 @@ function CalendarEventView<T extends CalendarEvent>({
         gridRow: dateSpanToGridRowSpan(event.start, event.end, minutesOffset),
       }}
     >
-      {!isDragged && (
+      {!isDragged && interactive && (
         <div
           onMouseDown={() =>
             setAsCurrentEvent({
@@ -138,7 +138,7 @@ function CalendarEventView<T extends CalendarEvent>({
         )}
       </div>
 
-      {!isDragged && (
+      {!isDragged && interactive && (
         <div
           onMouseDown={() =>
             setAsCurrentEvent({
