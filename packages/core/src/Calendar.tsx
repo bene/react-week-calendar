@@ -121,13 +121,13 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       const start = set(startDate, {
         date: startDate.getDate() + cell.dayIndex,
         hours: Math.floor(cell.minutes / 60),
-        minutes: cell.minutes % 60,
+        minutes: floor(cell.minutes % 60, interval),
       });
 
       const newEvent: CalendarEvent = {
         id: crypto.randomUUID(),
         title: "New Event",
-        start: new Date(start),
+        start,
         end: set(start, { minutes: start.getMinutes() + 30 }),
       };
 
