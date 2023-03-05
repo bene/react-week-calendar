@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Size = {
   width: number;
@@ -8,20 +8,19 @@ type Size = {
 function useElementSize(ref: React.MutableRefObject<HTMLElement | null>) {
   let [size, setSize] = useState<Size | null>(ref.current ? getSize(ref.current) : null);
 
-  function handleResize() {
+  function updateSize() {
     if (ref.current) {
       setSize(getSize(ref.current));
     }
   }
 
-  useLayoutEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+  useEffect(() => {
+    const observer = new ResizeObserver(updateSize);
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    return () => observer.disconnect();
+  }, [ref.current]);
 
   return size;
 }

@@ -69,7 +69,7 @@ function CalendarEventView<T extends CalendarEvent>({
               state: "extendStart",
             })
           }
-          className="absolute -top-1 left-0 right-0 z-20 h-4 cursor-n-resize"
+          className="absolute -top-1 left-0 right-0 z-20 h-4 cursor-ns-resize"
         />
       )}
 
@@ -146,7 +146,7 @@ function CalendarEventView<T extends CalendarEvent>({
               state: "extendEnd",
             })
           }
-          className="absolute -bottom-1 left-0 right-0 z-20 h-4 cursor-s-resize"
+          className="absolute -bottom-1 left-0 right-0 z-20 h-4 cursor-ns-resize"
         />
       )}
     </li>

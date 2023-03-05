@@ -4,6 +4,7 @@ import Calendar, { CalendarEvent } from "../../core/src";
 type EventWithType = CalendarEvent & { type: "Work" | "Leisure" };
 
 function App() {
+  const [showWeekend, setShowWeekend] = useState(true);
   const [events, setEvents] = useState<EventWithType[]>([
     {
       id: crypto.randomUUID(),
@@ -44,9 +45,18 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
+      <div className="border p-4">
+        <button
+          onClick={() => setShowWeekend(!showWeekend)}
+          className="rounded bg-teal-400 px-4 py-1 text-white"
+        >
+          {showWeekend ? "Hide weekend" : "Show weekend"}
+        </button>
+      </div>
       <Calendar
         minutesOffset={9 * 60}
         hoursPerDay={24 - 9}
+        daysPerWeek={showWeekend ? 7 : 5}
         startDate={new Date(2023, 0, 2)}
         events={events}
         setEvents={setEvents}
