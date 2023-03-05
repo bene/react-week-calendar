@@ -15,7 +15,7 @@ function App() {
     {
       id: crypto.randomUUID(),
       title: "Cinema",
-      start: new Date(2023, 0, 4, 13, 5, 0),
+      start: new Date(2023, 0, 4, 13, 0, 0),
       end: new Date(2023, 0, 4, 15, 0, 0),
       type: "Leisure",
     },

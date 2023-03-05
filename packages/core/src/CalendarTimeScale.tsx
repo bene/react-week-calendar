@@ -33,7 +33,7 @@ function CalendarTimeScale({
           gridTemplateRows: `repeat(${hoursPerDay * 2}, minmax(${cellHeight}px, 1fr))`,
         }}
       >
-        <div className="row-end-1 h-7" />
+        <div className="row-end-1" style={{ height: cellHeight / 2 }} />
         {hourRowViews}
       </div>
     </>

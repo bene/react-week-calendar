@@ -9,7 +9,7 @@ export type CalendarEvent = {
 
 export type Cell = {
   dayIndex: number;
-  hour: number;
+  minutes: number;
 };
 
 export type CurrentEventState = "new" | "move" | "extendStart" | "extendEnd";

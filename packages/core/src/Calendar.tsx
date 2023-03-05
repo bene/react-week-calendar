@@ -9,7 +9,14 @@ import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
 import { CalendarEvent, CurrentEvent } from "./types";
-import { classList, convertRemToPixels, getCell, getDayOffset } from "./utils";
+import {
+  ceil,
+  classList,
+  convertRemToPixels,
+  floor,
+  getCell,
+  getDayOffset,
+} from "./utils";
 
 type CalendarBaseProps = {
   startDate: Date;
@@ -93,7 +100,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
     const cell = getCell(
       {
         x: eventsGridOffset.x,
-        y: eventsGridOffset.y + cellHeight,
+        y: eventsGridOffset.y + cellHeight / 2,
       },
       {
         x: containerEl.current.scrollLeft + window.scrollX,
@@ -110,13 +117,10 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
     );
 
     if (e.target === eventsGridEl.current) {
-      const hours = cell.hour;
-      const minutes = (cell.hour % 1) * 60;
-
       const start = set(startDate, {
         date: startDate.getDate() + cell.dayIndex,
-        hours,
-        minutes,
+        hours: Math.floor(cell.minutes / 60),
+        minutes: cell.minutes % 60,
       });
 
       const newEvent: CalendarEvent = {
@@ -149,7 +153,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
     const cell = getCell(
       {
         x: eventsGridOffset.x,
-        y: eventsGridOffset.y + cellHeight,
+        y: eventsGridOffset.y + cellHeight / 2,
       },
       {
         x: containerEl.current.scrollLeft + window.scrollX,
@@ -173,8 +177,8 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
               ...event,
               start: event.start,
               end: set(event.end, {
-                hours: cell.hour,
-                minutes: (cell.hour % 1) * 60 + 30,
+                hours: Math.floor(cell.minutes / 60),
+                minutes: floor(cell.minutes % 60, 15),
               }),
             };
           }
@@ -197,8 +201,8 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
             const duration = event.end.getTime() - event.start.getTime();
             const newStart = set(event.start, {
               date,
-              hours: cell.hour,
-              minutes: (cell.hour % 1) * 60,
+              hours: Math.floor(cell.minutes / 60),
+              minutes: floor(cell.minutes % 60, 15),
             });
             const newEnd = set(newStart, {
               date,
@@ -225,15 +229,15 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
         const start =
           currentEvent.state === "extendStart"
             ? set(event.start, {
-                hours: cell.hour,
-                minutes: (cell.hour % 1) * 60,
+                hours: Math.floor(cell.minutes / 60),
+                minutes: floor(cell.minutes % 60, 5),
               })
             : event.start;
         const end =
           currentEvent.state === "extendEnd"
             ? set(event.end, {
-                hours: cell.hour,
-                minutes: (cell.hour % 1) * 60,
+                hours: Math.floor(cell.minutes / 60),
+                minutes: ceil(cell.minutes % 60, 5),
               })
             : event.end;
 
@@ -309,7 +313,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                     "col-start-1 col-end-2 row-start-1 grid"
                   )}
                   style={{
-                    gridTemplateRows: `1.75rem repeat(${
+                    gridTemplateRows: `${cellHeight / 2}px repeat(${
                       60 * hoursPerDay
                     }, minmax(0, 1fr)) auto`,
                   }}

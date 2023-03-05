@@ -13,12 +13,26 @@ function getCell(
   const posY = y - offset.y + scroll.y;
 
   const day = Math.ceil((posX / (cellSize.width * daysPerWeek)) * daysPerWeek);
-  const hour = Math.floor(posY / (cellSize.height / 2)) / 4 + minutesOffset / 60;
+
+  const minutesPerCell = 30;
+  const cells = posY / cellSize.height;
+  const minutes =
+    Math.floor(cells) * minutesPerCell +
+    Math.round((cells % 1) * minutesPerCell) +
+    minutesOffset;
 
   return {
     dayIndex: day - 1,
-    hour,
+    minutes,
   };
+}
+
+function floor(minutes: number, interval: number) {
+  return Math.floor(minutes / interval) * interval;
+}
+
+function ceil(minutes: number, interval: number) {
+  return Math.ceil(minutes / interval) * interval;
 }
 
 function convertRemToPixels(rem: number) {
@@ -33,4 +47,4 @@ function classList(...classes: (string | boolean)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export { getCell, convertRemToPixels, getDayOffset, classList };
+export { getCell, floor, ceil, convertRemToPixels, getDayOffset, classList };
