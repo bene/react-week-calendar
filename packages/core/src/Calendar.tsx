@@ -60,6 +60,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
   const [currentEvent, setCurrentEvent] = useState<CurrentEvent | null>(null);
   const [containerScrollTop, setContainerScrollTop] = useState(0);
   const weekStartsOn = startDate.getDay();
+  const interval = 5;
 
   const containerEl = useRef<HTMLDivElement | null>(null);
   const eventsGridEl = useRef<HTMLOListElement | null>(null);
@@ -178,7 +179,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
               start: event.start,
               end: set(event.end, {
                 hours: Math.floor(cell.minutes / 60),
-                minutes: floor(cell.minutes % 60, 15),
+                minutes: floor(cell.minutes % 60, interval),
               }),
             };
           }
@@ -202,7 +203,7 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
             const newStart = set(event.start, {
               date,
               hours: Math.floor(cell.minutes / 60),
-              minutes: floor(cell.minutes % 60, 15),
+              minutes: floor(cell.minutes % 60, interval),
             });
             const newEnd = set(newStart, {
               date,
@@ -230,14 +231,14 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
           currentEvent.state === "extendStart"
             ? set(event.start, {
                 hours: Math.floor(cell.minutes / 60),
-                minutes: floor(cell.minutes % 60, 5),
+                minutes: floor(cell.minutes % 60, interval),
               })
             : event.start;
         const end =
           currentEvent.state === "extendEnd"
             ? set(event.end, {
                 hours: Math.floor(cell.minutes / 60),
-                minutes: ceil(cell.minutes % 60, 5),
+                minutes: ceil(cell.minutes % 60, interval),
               })
             : event.end;
 
