@@ -45,10 +45,10 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
-      <div className="border p-4">
+      <div className="gp-2 flex justify-end border-b p-4">
         <button
           onClick={() => setShowWeekend(!showWeekend)}
-          className="rounded bg-teal-400 px-4 py-1 text-white"
+          className="rounded bg-gray-400 px-4 py-1 text-sm uppercase text-white shadow"
         >
           {showWeekend ? "Hide weekend" : "Show weekend"}
         </button>

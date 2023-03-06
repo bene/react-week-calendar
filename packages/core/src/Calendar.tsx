@@ -308,12 +308,9 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
                   ref={eventsGridEl}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}
-                  className={classList(
-                    interactive && "cursor-cell",
-                    `grid-cols-${daysPerWeek}`,
-                    "col-start-1 col-end-2 row-start-1 grid"
-                  )}
+                  className="col-start-1 col-end-2 row-start-1 grid"
                   style={{
+                    gridTemplateColumns: `repeat(${daysPerWeek}, minmax(0, 1fr))`,
                     gridTemplateRows: `${cellHeight / 2}px repeat(${
                       60 * hoursPerDay
                     }, minmax(0, 1fr)) auto`,
