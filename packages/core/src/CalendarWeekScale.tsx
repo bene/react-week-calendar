@@ -11,8 +11,8 @@ function CalendarWeekScale({
     <div
       key={i}
       ref={i === 0 ? cellWidthMeasurementElement : null}
-      className="row-span-full"
       style={{
+        gridRow: "1 / -1",
         gridColumnStart: i + 1,
       }}
     />

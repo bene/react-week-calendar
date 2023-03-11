@@ -45,7 +45,10 @@ function App() {
 
   return (
     <div className="h-screen w-screen">
-      <div className="gp-2 flex justify-end border-b p-4">
+      <div className="gp-2 flex items-center justify-between border-b p-4">
+        <a href="https://github.com/bene/react-week-calendar">
+          <img className="h-6 w-6" src="/github.svg" alt="GitHub" />
+        </a>
         <button
           onClick={() => setShowWeekend(!showWeekend)}
           className="rounded bg-gray-400 px-4 py-1 text-sm uppercase text-white shadow"
