@@ -56,7 +56,7 @@ function CalendarEventView<T extends CalendarEvent>({
     // rome-ignore lint/a11y/useKeyWithClickEvents: TODO
     <li
       onClick={event.onClick}
-      className={`relative mt-px hidden sm:flex ${weekdayClasses[weekday]}`}
+      className={`relative mt-px flex ${weekdayClasses[weekday]}`}
       style={{
         gridRow: dateSpanToGridRowSpan(event.start, event.end, minutesOffset),
       }}
@@ -76,9 +76,13 @@ function CalendarEventView<T extends CalendarEvent>({
       <div
         ref={containerRef}
         onMouseDown={e => {
+          const rect = containerRef.current!.getBoundingClientRect();
+          const offset = e.clientY - rect.top;
+
           setAsCurrentEvent({
             id: event.id,
             state: "move",
+            offset,
           });
         }}
         className="absolute inset-0 z-10 overflow-hidden"

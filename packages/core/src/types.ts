@@ -16,4 +16,5 @@ export type CurrentEventState = "new" | "move" | "extendStart" | "extendEnd";
 export type CurrentEvent = {
   id: string;
   state: CurrentEventState;
+  offset?: number;
 };

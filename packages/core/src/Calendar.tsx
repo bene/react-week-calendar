@@ -151,10 +151,13 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
       return;
     }
 
+    console.log(currentEvent.offset);
+    console.log(currentEvent.state);
+
     const cell = getCell(
       {
         x: eventsGridOffset.x,
-        y: eventsGridOffset.y + cellHeight / 2,
+        y: eventsGridOffset.y + cellHeight / 2 + (currentEvent.offset ?? 0),
       },
       {
         x: containerEl.current.scrollLeft + window.scrollX,
