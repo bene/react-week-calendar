@@ -9,14 +9,7 @@ import CalendarWeekScale from "./CalendarWeekScale";
 import useElementSize from "./useElementSize";
 import useElementOffset from "./useElementOffset";
 import { CalendarEvent, CurrentEvent } from "./types";
-import {
-  ceil,
-  classList,
-  convertRemToPixels,
-  floor,
-  getCell,
-  getDayOffset,
-} from "./utils";
+import { ceil, convertRemToPixels, floor, getCell, getDayOffset } from "./utils";
 
 type CalendarBaseProps = {
   startDate: Date;
@@ -150,9 +143,6 @@ function Calendar<T extends CalendarEvent = CalendarEvent>({
     ) {
       return;
     }
-
-    console.log(currentEvent.offset);
-    console.log(currentEvent.state);
 
     const cell = getCell(
       {
