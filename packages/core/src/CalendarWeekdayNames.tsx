@@ -61,10 +61,10 @@ function CalendarWeekdayNames({
       )}
     >
       <div
-        className={classList(
-          `grid-cols-${daysPerWeek}`,
-          "grid divide-x divide-gray-100 text-sm leading-6 text-gray-500 "
-        )}
+        className="grid divide-x divide-gray-100 text-sm leading-6 text-gray-500"
+        style={{
+          gridTemplateColumns: `repeat(${daysPerWeek}, minmax(0, 1fr))`,
+        }}
       >
         <div className="col-end-1 w-14" />
         {dayViews}
@@ -72,15 +72,5 @@ function CalendarWeekdayNames({
     </div>
   );
 }
-
-const _twInclude = [
-  "grid-cols-1",
-  "grid-cols-2",
-  "grid-cols-3",
-  "grid-cols-4",
-  "grid-cols-5",
-  "grid-cols-6",
-  "grid-cols-7",
-];
 
 export default CalendarWeekdayNames;
